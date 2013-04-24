@@ -1,7 +1,8 @@
 package br.ufrn.dimap.pubnote.ws.responses;
 
-public class LoginFailure {
+public class LoginResponse {
 	
+	private boolean success;
 	private String message;
 
 	public String getMessage() {
@@ -10,6 +11,14 @@ public class LoginFailure {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
 	}
 	
 	
