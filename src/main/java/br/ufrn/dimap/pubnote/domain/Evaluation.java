@@ -19,7 +19,10 @@ public class Evaluation implements Serializable
 	
 	private static final long serialVersionUID = 901427335996618360L;
 	
-	private String reviewerNotes, reviewerName;
+	private int id_user;
+	private int id_article;
+	
+	private String reviewerNotes;	
 
 	private float originality, contribution, relevance, readability, relatedWorks, reviewerFamiliarity;
 	private Date evalDate;
@@ -38,6 +41,18 @@ public class Evaluation implements Serializable
 	public void setId(long id) 
 	{
 		this.id = id;
+	}
+	public int getId_user() {
+		return id_user;
+	}
+	public void setId_user(int id_user) {
+		this.id_user = id_user;
+	}
+	public int getId_article() {
+		return id_article;
+	}
+	public void setId_article(int id_article) {
+		this.id_article = id_article;
 	}
 	public String getNotes() 
 	{
@@ -64,18 +79,7 @@ public class Evaluation implements Serializable
 	public void setReviewerNotes(String reviewerNotes) {
 		this.reviewerNotes = reviewerNotes;
 	}
-
-
-	public String getReviewerName() {
-		return reviewerName;
-	}
-
-
-	public void setReviewerName(String reviewerName) {
-		this.reviewerName = reviewerName;
-	}
-
-
+	
 	public float getOriginality() {
 		return originality;
 	}
@@ -145,6 +149,7 @@ public class Evaluation implements Serializable
 		this.evalDate = evalDate;
 	}
 
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -163,7 +168,10 @@ public class Evaluation implements Serializable
 		builder.append(this.getRelevance());
 		builder.append(", id=");
 		builder.append(this.getId());
-		
+		builder.append(", id_user=");
+		builder.append(this.getId_user());
+		builder.append(", id_article=");
+		builder.append(this.getId_article());
 		builder.append("]");
 		return builder.toString();
 	}

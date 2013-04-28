@@ -20,7 +20,7 @@ public class EvaluationService
 	EvaluationDAO evalDao;
 	
 	/**
-	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/new  
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id_user":"1", "id_article":"1", "originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/new  
 	 * @param user
 	 * @return
 	 */	
