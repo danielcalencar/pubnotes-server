@@ -5,11 +5,11 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
-
-public class User implements Serializable{
+@Entity(name="pubnotes_user")
+public class UserEntity implements Serializable{
 	
-	private static final long serialVersionUID = -3903626465084401724L;
 
 	private long id;
 	
@@ -17,8 +17,10 @@ public class User implements Serializable{
 	
 	private String password;
 	
-	private String useremail;
+	private String email;
 
+	@Id
+	@GeneratedValue
 	public long getId() {
 		return id;
 	}
@@ -34,6 +36,7 @@ public class User implements Serializable{
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
 	public String getPassword() {
 		return password;
 	}
@@ -42,27 +45,22 @@ public class User implements Serializable{
 		this.password = password;
 	}
 
-	public String getUseremail() {
-		return useremail;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUseremail(String useremail) {
-		this.useremail = useremail;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("User [username=");
-		builder.append(username);
-		builder.append(", password=");
-		builder.append(password);
-		builder.append(", email=");
-		builder.append(useremail);
-		builder.append("]");
-		return builder.toString();
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
-	
-
+	@Transient
+	public User convertToUser()
+	{
+		User user = new User();
+		user.setUseremail(this.getEmail());
+		user.setId(this.getId());
+		user.setPassword(this.getPassword());
+		user.setUsername(this.getUsername());
+		return user;
+	}
 }

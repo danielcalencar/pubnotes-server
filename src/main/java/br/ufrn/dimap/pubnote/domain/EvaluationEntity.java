@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 /**
  * This class represents the evaluations of an article
@@ -14,33 +15,25 @@ import javax.persistence.ManyToOne;
  *
  */
 
-public class Evaluation implements Serializable 
+@Entity(name="Evaluation")
+public class EvaluationEntity implements Serializable 
 {
 	
-	private static final long serialVersionUID = 901427335996618360L;
-	
-	private User user;
-	private long article_id;
+	private UserEntity user;
+	private ArticleEntity article;
 	
 	private String reviewerNotes;	
 
 	private float originality, contribution, relevance, readability, relatedWorks, reviewerFamiliarity;
 	private Date evalDate;
 	
-	private boolean published;
 	
-	public boolean getPublished() 
-	{
-		return published;
-	}
-	
-	public void setPublished(boolean published) 
-	{
-		this.published = published;
-	}
-
 	private long id;
 	
+	private boolean published;
+	
+	@Id
+	@GeneratedValue
 	public long getId() 
 	{
 		return id;
@@ -49,11 +42,11 @@ public class Evaluation implements Serializable
 	{
 		this.id = id;
 	}
-
-	public User getUser() {
+	@ManyToOne
+	public UserEntity getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public void setUser(UserEntity user) {
 		this.user = user;
 	}
 	
@@ -134,37 +127,42 @@ public class Evaluation implements Serializable
 		this.evalDate = evalDate;
 	}	
 	
-	public long getArticle_id() {
-		return article_id;
+	@ManyToOne
+	public ArticleEntity getArticle()
+	{
+		return article;
 	}
-	public void setArticle_id(long article_id) {
-		this.article_id = article_id;
+	public void setArticle(ArticleEntity article) 
+	{
+		this.article = article;
 	}
 	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Evaluation [originality=");
-		builder.append(this.getOriginality());
-		builder.append(", contribution=");
-		builder.append(this.getContribution());
-		builder.append(", relevance=");
-		builder.append(this.getRelevance());
-		
-		builder.append(", readability=");
-		builder.append(this.getReadability());
-		builder.append(", relatedWorks=");
-		builder.append(this.getRelatedWorks());
-		builder.append(", relevance=");
-		builder.append(this.getRelevance());
-		builder.append(", id=");
-		builder.append(this.getId());
-		builder.append(", user=");
-		builder.append(this.user.getId());
-		//builder.append(", article=");
-		//builder.append(this.article_id);
-		builder.append("]");
-		return builder.toString();
+	@Transient
+	public Evaluation convertToEvaluation()
+	{
+		Evaluation eval = new Evaluation();
+		eval.setArticle_id(this.getArticle().getId());
+		eval.setContribution(this.getContribution());
+		eval.setEvalDate(this.getEvalDate());
+		eval.setId(this.getId());
+		eval.setOriginality(this.getOriginality());
+		eval.setReadability(this.getReadability());
+		eval.setRelatedWorks(this.getRelatedWorks());
+		eval.setRelevance(this.getRelevance());
+		eval.setReviewerFamiliarity(this.getReviewerFamiliarity());
+		eval.setReviewerNotes(this.getReviewerNotes());
+		eval.setUser(this.getUser().convertToUser());
+		eval.setPublished(this.getPublished());
+		return eval;
+	}
+	
+	public boolean getPublished() 
+	{
+		return published;
+	}
+	public void setPublished(boolean published) 
+	{
+		this.published = published;
 	}
 	
 }
