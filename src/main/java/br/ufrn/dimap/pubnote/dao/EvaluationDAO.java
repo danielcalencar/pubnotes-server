@@ -24,8 +24,10 @@ public class EvaluationDAO extends DAO<Evaluation>
 	
 	public void persist(Evaluation obj) 
 	{
+		EvaluationEntity entity = new EvaluationEntity(obj);
+		
 		Transaction tx = session.beginTransaction();
-		session.persist(obj);
+		session.persist(entity);
 		tx.commit();
 	}
 	
