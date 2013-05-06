@@ -1,7 +1,20 @@
 package br.ufrn.dimap.pubnote.domain;
 
-public class User {
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class User implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3903626465084401724L;
+
 	private int id;
 	
 	private String username;
@@ -10,6 +23,8 @@ public class User {
 	
 	private String email;
 
+	@Id
+	@GeneratedValue
 	public int getId() {
 		return id;
 	}
@@ -25,7 +40,6 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
 	public String getPassword() {
 		return password;
 	}

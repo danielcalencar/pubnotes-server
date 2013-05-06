@@ -35,6 +35,7 @@
 		
 		<!-- MAPPINGS HERE -->
 		<mapping  class="br.ufrn.dimap.pubnote.domain.Evaluation"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.User"/>
 		
 	</session-factory>
 </hibernate-configuration>
