@@ -32,6 +32,19 @@ public class EvaluationEntity implements Serializable
 	
 	private boolean published;
 	
+	public EvaluationEntity() {
+		super();
+	}
+	
+	public EvaluationEntity(Evaluation evaluation) {
+		super();
+		
+		this.setOriginality(evaluation.getOriginality());
+		// TODO complete this...
+		
+		
+	}
+	
 	@Id
 	@GeneratedValue
 	public long getId() 

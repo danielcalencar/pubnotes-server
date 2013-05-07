@@ -22,6 +22,9 @@ public class Evaluation implements Serializable
 	private User user;
 	private long article_id;
 	
+	private int id_user;
+	private int id_article;
+	
 	private String reviewerNotes;	
 
 	private float originality, contribution, relevance, readability, relatedWorks, reviewerFamiliarity;
@@ -141,6 +144,22 @@ public class Evaluation implements Serializable
 		this.article_id = article_id;
 	}
 	
+	public int getId_user() {
+		return id_user;
+	}
+
+	public void setId_user(int id_user) {
+		this.id_user = id_user;
+	}
+
+	public int getId_article() {
+		return id_article;
+	}
+
+	public void setId_article(int id_article) {
+		this.id_article = id_article;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

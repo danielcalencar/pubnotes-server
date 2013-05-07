@@ -16,6 +16,7 @@ import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
 import br.ufrn.dimap.pubnote.domain.Article;
 import br.ufrn.dimap.pubnote.domain.Evaluation;
+import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 
 @Path( "/evaluation" )
 @Consumes( MediaType.APPLICATION_JSON )
@@ -26,7 +27,7 @@ public class EvaluationService
 	EvaluationDAO evalDao;
 	
 	/**
-	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id_user":"1", "id_article":"1", "originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/new  
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id_user":"1", "id_article":"1", "originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/  
 	 * @param user
 	 * @return
 	 */	
@@ -35,7 +36,7 @@ public class EvaluationService
 		EvaluationDAOFactory factory = new EvaluationDAOFactory();
 		evalDao = factory.createDAO();
 		evalDao.persist(evaluation);
-				
+		
 		return Response.status(201).build();
 	}
 	
