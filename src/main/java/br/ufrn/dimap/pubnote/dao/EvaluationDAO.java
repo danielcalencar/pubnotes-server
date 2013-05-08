@@ -18,7 +18,7 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 {
 
 	private static final String EVALUATIONS_FROM_ARTICLE_QUERY = 
-			"from Evaluation e where e.article.id = :id";
+			"from Evaluation e where e.article.title = :title";
 	private static final String ALL_EVALUATIONS = 
 			"from Evaluation e ";
 	
@@ -29,11 +29,11 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 		tx.commit();
 	}
 	
-	public Evaluation[] getEvaluationsFromArticle(long id)
+	public Evaluation[] getEvaluationsFromArticle(String title)
 	{
 		String hql = EVALUATIONS_FROM_ARTICLE_QUERY;
 		Query query = session.createQuery(hql);
-		query.setParameter("id", id);
+		query.setParameter("title", title);
 		List<EvaluationEntity> evaluations = query.list();
 		Evaluation[] evalArray = new Evaluation[evaluations.size()];
 		for(int i = 0; i < evalArray.length; i++)
