@@ -3,11 +3,6 @@ package br.ufrn.dimap.pubnote.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
 /**
  * This class represents the evaluations of an article
  * @author daniel
@@ -20,10 +15,12 @@ public class Evaluation implements Serializable
 	private static final long serialVersionUID = 901427335996618360L;
 	
 	private User user;
-	private long article_id;
 	
 	private int id_user;
-	private int id_article;
+	
+	/** now we must pass the article information too **/
+	private Article article;
+	
 	
 	private String reviewerNotes;	
 
@@ -137,13 +134,6 @@ public class Evaluation implements Serializable
 		this.evalDate = evalDate;
 	}	
 	
-	public long getArticle_id() {
-		return article_id;
-	}
-	public void setArticle_id(long article_id) {
-		this.article_id = article_id;
-	}
-	
 	public int getId_user() {
 		return id_user;
 	}
@@ -152,12 +142,12 @@ public class Evaluation implements Serializable
 		this.id_user = id_user;
 	}
 
-	public int getId_article() {
-		return id_article;
+	public Article getArticle() {
+		return article;
 	}
 
-	public void setId_article(int id_article) {
-		this.id_article = id_article;
+	public void setArticle(Article article) {
+		this.article = article;
 	}
 
 	@Override
