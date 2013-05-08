@@ -5,7 +5,6 @@ public class EvaluationDAOFactory implements DAOFactory
 
 	public EvaluationDAO createDAO() 
 	{
-		// TODO Auto-generated method stub
 		return new EvaluationDAO();
 	}
 

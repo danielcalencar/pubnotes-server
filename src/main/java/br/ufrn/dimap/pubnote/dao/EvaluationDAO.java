@@ -14,7 +14,7 @@ import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
  * @author daniel
  *
  */
-public class EvaluationDAO extends DAO<Evaluation> 
+public class EvaluationDAO extends DAO<EvaluationEntity> 
 {
 
 	private static final String EVALUATIONS_FROM_ARTICLE_QUERY = 
@@ -22,12 +22,10 @@ public class EvaluationDAO extends DAO<Evaluation>
 	private static final String ALL_EVALUATIONS = 
 			"from Evaluation e ";
 	
-	public void persist(Evaluation obj) 
+	public void persist(EvaluationEntity obj) 
 	{
-		EvaluationEntity entity = new EvaluationEntity(obj);
-		
 		Transaction tx = session.beginTransaction();
-		session.persist(entity);
+		session.persist(obj);
 		tx.commit();
 	}
 	
@@ -58,6 +56,23 @@ public class EvaluationDAO extends DAO<Evaluation>
 		}
 		
 		return evalArray;
+	}
+
+	@Override
+	public EvaluationEntity load(long id)
+	{
+		Transaction tx = session.beginTransaction();
+		EvaluationEntity evalEntity = (EvaluationEntity) session.load(EvaluationEntity.class, id);
+		tx.commit();
+		return evalEntity;
+	}
+
+	@Override
+	public void update(EvaluationEntity obj) 
+	{
+		Transaction tx = session.beginTransaction();
+		session.update(obj);
+		tx.commit();
 	}
 
 }

@@ -36,13 +36,18 @@ public class EvaluationEntity implements Serializable
 		super();
 	}
 	
-	public EvaluationEntity(Evaluation evaluation) {
+	public EvaluationEntity(Evaluation evaluation) 
+	{
 		super();
 		
+		this.setContribution(evaluation.getContribution());
+		this.setEvalDate(evaluation.getEvalDate());
 		this.setOriginality(evaluation.getOriginality());
-		// TODO complete this...
-		
-		
+		this.setPublished(evaluation.getPublished());
+		this.setReadability(evaluation.getReadability());
+		this.setRelatedWorks(evaluation.getRelatedWorks());
+		this.setRelevance(evaluation.getRelevance());
+		this.setReviewerFamiliarity(evaluation.getReviewerFamiliarity());
 	}
 	
 	@Id
@@ -154,7 +159,6 @@ public class EvaluationEntity implements Serializable
 	public Evaluation convertToEvaluation()
 	{
 		Evaluation eval = new Evaluation();
-		eval.setArticle_id(this.getArticle().getId());
 		eval.setContribution(this.getContribution());
 		eval.setEvalDate(this.getEvalDate());
 		eval.setId(this.getId());

@@ -18,6 +18,10 @@ public abstract class DAO<T> {
 	/** methods for persist date must go here **/
 	public abstract void persist(T obj);
 	
+	public abstract T load(long id);
+	
+	public abstract void update(T obj);
+	
 	
 	/**
 	 * building session
