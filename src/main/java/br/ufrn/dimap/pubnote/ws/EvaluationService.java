@@ -45,7 +45,7 @@ public class EvaluationService
 		
 		/** first we must verify if the article already exists **/
 		Article article = evaluation.getArticle();
-		ArticleEntity articleEntity = articleDao.load(article.getId());
+		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
 		
 		if(articleEntity != null)
 		{
@@ -74,10 +74,10 @@ public class EvaluationService
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Evaluation[] retrieveEvaluations(Map<String,String> bundle)
 	{
-		long id = Long.valueOf(bundle.get("article"));
+		String title = bundle.get("article");
 		EvaluationDAOFactory factory = new EvaluationDAOFactory();
 		EvaluationDAO evalDao = factory.createDAO();
-		Evaluation[] evaluations = evalDao.getEvaluationsFromArticle(id);
+		Evaluation[] evaluations = evalDao.getEvaluationsFromArticle(title);
 		return evaluations;
 	}
 }
