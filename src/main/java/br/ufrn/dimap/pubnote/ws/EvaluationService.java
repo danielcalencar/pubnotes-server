@@ -1,7 +1,5 @@
 package br.ufrn.dimap.pubnote.ws;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -9,12 +7,18 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.sun.xml.bind.v2.runtime.Name;
+
+import br.ufrn.dimap.pubnote.dao.ArticleDAO;
+import br.ufrn.dimap.pubnote.dao.ArticleDAOFactory;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
 import br.ufrn.dimap.pubnote.domain.Article;
+import br.ufrn.dimap.pubnote.domain.ArticleEntity;
 import br.ufrn.dimap.pubnote.domain.Evaluation;
 import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 
@@ -24,7 +28,10 @@ import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 public class EvaluationService 
 {
 	/** dao utilized to do the operations of evaluation**/
+	EvaluationDAOFactory evalFactory = new EvaluationDAOFactory();
 	EvaluationDAO evalDao;
+	ArticleDAOFactory articleFactory = new ArticleDAOFactory();
+	ArticleDAO articleDao;
 	
 	/**
 	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id_user":"1", "id_article":"1", "originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/  
@@ -33,10 +40,25 @@ public class EvaluationService
 	 */	
 	@POST
 	public Response createEvaluation(Evaluation evaluation){		
-		EvaluationDAOFactory factory = new EvaluationDAOFactory();
-		evalDao = factory.createDAO();
-		evalDao.persist(evaluation);
+		evalDao = evalFactory.createDAO();
+		articleDao = articleFactory.createDAO();
 		
+		/** first we must verify if the article already exists **/
+		Article article = evaluation.getArticle();
+		ArticleEntity articleEntity = articleDao.load(article.getId());
+		
+		if(articleEntity != null)
+		{
+			/**in that case we must persist the article **/
+			articleEntity = new ArticleEntity(article);
+			articleDao.persist(articleEntity);
+		}
+		/** lets persist the evaluation **/
+		EvaluationEntity evalEntity = new EvaluationEntity(evaluation);
+		evalDao.persist(evalEntity);
+		/** now lets associate the evaluation with the article**/
+		articleEntity.getEvaluations().add(evalEntity);
+		articleDao.update(articleEntity);
 		return Response.status(201).build();
 	}
 	

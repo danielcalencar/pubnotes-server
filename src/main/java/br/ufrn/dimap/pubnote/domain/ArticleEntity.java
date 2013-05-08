@@ -1,6 +1,7 @@
 package br.ufrn.dimap.pubnote.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -38,6 +39,19 @@ public class ArticleEntity implements Serializable
 	 */
 	private List<EvaluationEntity> evaluations;
 
+	public ArticleEntity(){}
+	
+	public ArticleEntity(Article article)
+	{
+		evaluations = new ArrayList<EvaluationEntity>();
+		this.abztract = article.getAbztract();
+		this.authors = article.getAuthors();
+		this.downloadLink = article.getDownloadLink();
+		this.eventInformation = article.getEventInformation();
+		this.title = article.getTitle();
+		this.remoteLocation = article.getRemoteLocation();
+	}
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	public long getId() {
@@ -108,6 +122,5 @@ public class ArticleEntity implements Serializable
 
 	public void setEventInformation(String eventInformation) {
 		this.eventInformation = eventInformation;
-	}
-	
+	}	
 }
