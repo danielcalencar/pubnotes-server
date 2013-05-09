@@ -36,8 +36,8 @@ public class Article implements Serializable
 	
 	/**
 	 * The evaluations made for the article
-	 */
-	private List<Evaluation> evaluations;
+	 *
+	private List<Evaluation> evaluations;*/
 
 	public long getId() {
 		return id;
@@ -67,14 +67,14 @@ public class Article implements Serializable
 		return "IEEE_-_ARTICLENAME" +  System.currentTimeMillis() + ".pdf";
 	}
 
-	public List<Evaluation> getEvaluations() {
+	/**public List<Evaluation> getEvaluations() {
 		return evaluations;
 	}
 
 	public void setEvaluations(List<Evaluation> evaluations) {
 		this.evaluations = evaluations;
 	}
-	
+	**/
 	public String getAbztract() {
 		return abztract;
 	}
