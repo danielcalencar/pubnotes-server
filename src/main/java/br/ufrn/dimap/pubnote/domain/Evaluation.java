@@ -14,9 +14,7 @@ public class Evaluation implements Serializable
 	
 	private static final long serialVersionUID = 901427335996618360L;
 	
-	private User user;
-	
-	private int id_user;
+	private User user;	
 	
 	/** now we must pass the article information too **/
 	private Article article;
@@ -133,14 +131,6 @@ public class Evaluation implements Serializable
 	public void setEvalDate(Date evalDate) {
 		this.evalDate = evalDate;
 	}	
-	
-	public int getId_user() {
-		return id_user;
-	}
-
-	public void setId_user(int id_user) {
-		this.id_user = id_user;
-	}
 
 	public Article getArticle() {
 		return article;
