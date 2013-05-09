@@ -61,9 +61,7 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 	@Override
 	public EvaluationEntity load(long id)
 	{
-		Transaction tx = session.beginTransaction();
 		EvaluationEntity evalEntity = (EvaluationEntity) session.load(EvaluationEntity.class, id);
-		tx.commit();
 		return evalEntity;
 	}
 
