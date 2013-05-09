@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Cascade;
 
 /**
  * This class represents the articles from the computer science vehicles 
@@ -50,6 +53,7 @@ public class ArticleEntity implements Serializable
 		this.eventInformation = article.getEventInformation();
 		this.title = article.getTitle();
 		this.remoteLocation = article.getRemoteLocation();
+		this.id = article.getId();
 	}
 	
 	@Id
@@ -82,7 +86,7 @@ public class ArticleEntity implements Serializable
 		return "IEEE_-_ARTICLENAME" +  System.currentTimeMillis() + ".pdf";
 	}
 
-	@OneToMany(mappedBy="article")
+	@OneToMany(mappedBy="article",cascade=CascadeType.ALL)
 	public List<EvaluationEntity> getEvaluations() {
 		return evaluations;
 	}
@@ -123,4 +127,17 @@ public class ArticleEntity implements Serializable
 	public void setEventInformation(String eventInformation) {
 		this.eventInformation = eventInformation;
 	}	
+	
+	public Article convertToArticle()
+	{
+		Article article = new Article();
+		article.setAbztract(this.getAbztract());
+		article.setAuthors(this.getAuthors());
+		article.setDownloadLink(this.getDownloadLink());
+		article.setEventInformation(this.getEventInformation());
+		article.setId(this.getId());
+		article.setRemoteLocation(this.getRemoteLocation());
+		article.setTitle(this.getTitle());
+		return article;
+	}
 }

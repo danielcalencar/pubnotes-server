@@ -47,7 +47,7 @@ public class EvaluationService
 		Article article = evaluation.getArticle();
 		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
 		
-		if(articleEntity != null)
+		if(articleEntity == null)
 		{
 			/**in that case we must persist the article **/
 			articleEntity = new ArticleEntity(article);
