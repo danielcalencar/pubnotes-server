@@ -28,11 +28,9 @@ public class ArticleDAO extends DAO<ArticleEntity>
 	}
 	
 	public ArticleEntity loadByTitle(String title) {
-		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery(ARTICLE_BY_TITLE);
 		query.setParameter("title", title);
 		ArticleEntity entity = (ArticleEntity) query.uniqueResult();
-		tx.commit();
 		return entity;
 	}
 
