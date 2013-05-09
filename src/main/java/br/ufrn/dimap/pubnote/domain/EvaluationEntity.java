@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -21,15 +22,11 @@ public class EvaluationEntity implements Serializable
 	
 	private UserEntity user;
 	private ArticleEntity article;
-	
 	private String reviewerNotes;	
-
 	private float originality, contribution, relevance, readability, relatedWorks, reviewerFamiliarity;
 	private Date evalDate;
 	
-	
 	private long id;
-	
 	private boolean published;
 	
 	public EvaluationEntity() {
@@ -48,6 +45,9 @@ public class EvaluationEntity implements Serializable
 		this.setRelatedWorks(evaluation.getRelatedWorks());
 		this.setRelevance(evaluation.getRelevance());
 		this.setReviewerFamiliarity(evaluation.getReviewerFamiliarity());
+		ArticleEntity articleEntity = new ArticleEntity();
+		articleEntity.setId(evaluation.getArticle().getId());
+		this.setArticle(articleEntity);
 	}
 	
 	@Id
@@ -145,11 +145,12 @@ public class EvaluationEntity implements Serializable
 		this.evalDate = evalDate;
 	}	
 	
-	@ManyToOne
+	@ManyToOne()
 	public ArticleEntity getArticle()
 	{
 		return article;
 	}
+	
 	public void setArticle(ArticleEntity article) 
 	{
 		this.article = article;
@@ -170,6 +171,7 @@ public class EvaluationEntity implements Serializable
 		eval.setReviewerNotes(this.getReviewerNotes());
 		eval.setUser(this.getUser().convertToUser());
 		eval.setPublished(this.getPublished());
+		eval.setArticle(this.getArticle().convertToArticle());
 		return eval;
 	}
 	
