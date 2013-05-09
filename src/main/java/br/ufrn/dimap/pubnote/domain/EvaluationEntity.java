@@ -45,9 +45,14 @@ public class EvaluationEntity implements Serializable
 		this.setRelatedWorks(evaluation.getRelatedWorks());
 		this.setRelevance(evaluation.getRelevance());
 		this.setReviewerFamiliarity(evaluation.getReviewerFamiliarity());
+		this.setReviewerNotes(evaluation.getReviewerNotes());
 		ArticleEntity articleEntity = new ArticleEntity();
 		articleEntity.setId(evaluation.getArticle().getId());
 		this.setArticle(articleEntity);
+		UserEntity userEntity = new UserEntity();
+		userEntity.setId(evaluation.getUser().getId());
+		this.setUser(userEntity);
+		this.setEvalDate(new Date());
 	}
 	
 	@Id
@@ -60,7 +65,7 @@ public class EvaluationEntity implements Serializable
 	{
 		this.id = id;
 	}
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	public UserEntity getUser() {
 		return user;
 	}
@@ -145,7 +150,7 @@ public class EvaluationEntity implements Serializable
 		this.evalDate = evalDate;
 	}	
 	
-	@ManyToOne()
+	@ManyToOne(fetch=FetchType.EAGER)
 	public ArticleEntity getArticle()
 	{
 		return article;
