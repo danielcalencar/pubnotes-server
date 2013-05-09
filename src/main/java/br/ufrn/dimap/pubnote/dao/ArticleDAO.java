@@ -21,18 +21,14 @@ public class ArticleDAO extends DAO<ArticleEntity>
 
 	@Override
 	public ArticleEntity load(long id) {
-		Transaction tx = session.beginTransaction();
 		ArticleEntity entity = (ArticleEntity) session.load(ArticleEntity.class, id);
-		tx.commit();
 		return entity;
 	}
 	
 	public ArticleEntity loadByTitle(String title) {
-		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery(ARTICLE_BY_TITLE);
 		query.setParameter("title", title);
 		ArticleEntity entity = (ArticleEntity) query.uniqueResult();
-		tx.commit();
 		return entity;
 	}
 
