@@ -2,8 +2,13 @@ package br.ufrn.dimap.pubnote.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 public class Profile implements Serializable {
 
+	@Id()
 	private long id;
 	//basic information
 	private String institution;
@@ -73,7 +78,8 @@ public class Profile implements Serializable {
 		this.phone = phone;
 	}
 
-
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	public long getId() {
 		return id;
 	}
