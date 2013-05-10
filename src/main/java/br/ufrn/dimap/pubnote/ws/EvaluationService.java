@@ -47,9 +47,9 @@ public class EvaluationService
 		
 		/** first we must verify if the article already exists **/
 		Article article = evaluation.getArticle();
-		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
-		
+
 		Transaction tx = articleDao.beginTransaction();
+		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
 		if(articleEntity == null)
 		{
 			/**in that case we must persist the article **/
@@ -58,6 +58,7 @@ public class EvaluationService
 		}
 		/** lets persist the evaluation **/
 		EvaluationEntity evalEntity = new EvaluationEntity(evaluation);
+		evalEntity.setArticle(articleEntity);
 		evalDao.persist(evalEntity);
 		/** now lets associate the evaluation with the article**/
 		articleEntity.getEvaluations().add(evalEntity);

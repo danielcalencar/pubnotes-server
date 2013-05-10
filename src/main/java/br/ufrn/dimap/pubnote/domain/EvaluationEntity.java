@@ -46,9 +46,6 @@ public class EvaluationEntity implements Serializable
 		this.setRelevance(evaluation.getRelevance());
 		this.setReviewerFamiliarity(evaluation.getReviewerFamiliarity());
 		this.setReviewerNotes(evaluation.getReviewerNotes());
-		ArticleEntity articleEntity = new ArticleEntity();
-		articleEntity.setId(evaluation.getArticle().getId());
-		this.setArticle(articleEntity);
 		UserEntity userEntity = new UserEntity();
 		userEntity.setId(evaluation.getUser().getId());
 		this.setUser(userEntity);
