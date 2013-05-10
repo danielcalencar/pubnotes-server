@@ -20,10 +20,12 @@ import br.ufrn.dimap.pubnote.dao.ArticleDAOFactory;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
 import br.ufrn.dimap.pubnote.dao.UserDAO;
+import br.ufrn.dimap.pubnote.dao.UserDAOFactory;
 import br.ufrn.dimap.pubnote.domain.Article;
 import br.ufrn.dimap.pubnote.domain.ArticleEntity;
 import br.ufrn.dimap.pubnote.domain.Evaluation;
 import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
+import br.ufrn.dimap.pubnote.domain.User;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
 
 @Path( "/evaluation" )
@@ -36,6 +38,7 @@ public class EvaluationService
 	EvaluationDAO evalDao;
 	ArticleDAOFactory articleFactory = new ArticleDAOFactory();
 	ArticleDAO articleDao;
+	UserDAOFactory userFactory = new UserDAOFactory();
 	UserDAO userDao;
 	
 	/**
@@ -54,7 +57,7 @@ public class EvaluationService
 		
 		/** first we must verify if the article already exists **/
 		Article article = evaluation.getArticle();
-
+		User user = evaluation.getUser();
 		Transaction tx = articleDao.beginTransaction();
 		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
 		if(articleEntity == null)
@@ -64,19 +67,21 @@ public class EvaluationService
 			articleDao.persist(articleEntity);
 		}
 		
-		/** Transform a User in a UserEntity **/
-		UserDAO userDao = new UserDAO();
-		UserEntity userEntity = new UserEntity(evaluation.getUser());
-		userDao.persist(userEntity);
+		/** load the user from the database 
+		 * the user already exists**/
+		userDao = userFactory.createDAO();
+		UserEntity userEntity = userDao.load(user.getId());
 		
 		/** lets persist the evaluation **/
 		EvaluationEntity evalEntity = new EvaluationEntity(evaluation);
 		evalEntity.setArticle(articleEntity);
 		evalEntity.setUser(userEntity);
 		evalDao.persist(evalEntity);
+		
 		/** now lets associate the evaluation with the article**/
 		articleEntity.getEvaluations().add(evalEntity);
 		articleDao.update(articleEntity);
+		
 		articleDao.commit(tx);
 		return Response.status(201).build();
 	}

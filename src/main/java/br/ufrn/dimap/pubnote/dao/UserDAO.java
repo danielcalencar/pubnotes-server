@@ -12,7 +12,7 @@ import br.ufrn.dimap.pubnote.domain.UserEntity;
  */
 public class UserDAO extends DAO<UserEntity> 
 {
-	private final static String USER_BY_USERNAME = "from user pubnotes_user u where u.username = :username";
+	private final static String USER_BY_USERNAME = "from punotes_user u where u.username = :username";
 
 	@Override
 	public void persist(UserEntity obj) {
