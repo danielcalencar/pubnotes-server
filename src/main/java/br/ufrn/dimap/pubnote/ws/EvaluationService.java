@@ -19,10 +19,12 @@ import br.ufrn.dimap.pubnote.dao.ArticleDAO;
 import br.ufrn.dimap.pubnote.dao.ArticleDAOFactory;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
+import br.ufrn.dimap.pubnote.dao.UserDAO;
 import br.ufrn.dimap.pubnote.domain.Article;
 import br.ufrn.dimap.pubnote.domain.ArticleEntity;
 import br.ufrn.dimap.pubnote.domain.Evaluation;
 import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
+import br.ufrn.dimap.pubnote.domain.UserEntity;
 
 @Path( "/evaluation" )
 @Consumes( MediaType.APPLICATION_JSON )
@@ -34,6 +36,7 @@ public class EvaluationService
 	EvaluationDAO evalDao;
 	ArticleDAOFactory articleFactory = new ArticleDAOFactory();
 	ArticleDAO articleDao;
+	UserDAO userDao;
 	
 	/**
 	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id_user":"1", "id_article":"1", "originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/  
@@ -44,6 +47,10 @@ public class EvaluationService
 	public Response createEvaluation(Evaluation evaluation){		
 		evalDao = evalFactory.createDAO();
 		articleDao = articleFactory.createDAO();
+		
+		System.out.println("==========");
+		System.out.println(evaluation.getUser());
+		System.out.println("==========");
 		
 		/** first we must verify if the article already exists **/
 		Article article = evaluation.getArticle();
@@ -56,9 +63,16 @@ public class EvaluationService
 			articleEntity = new ArticleEntity(article);
 			articleDao.persist(articleEntity);
 		}
+		
+		/** Transform a User in a UserEntity **/
+		UserDAO userDao = new UserDAO();
+		UserEntity userEntity = new UserEntity(evaluation.getUser());
+		userDao.persist(userEntity);
+		
 		/** lets persist the evaluation **/
 		EvaluationEntity evalEntity = new EvaluationEntity(evaluation);
 		evalEntity.setArticle(articleEntity);
+		evalEntity.setUser(userEntity);
 		evalDao.persist(evalEntity);
 		/** now lets associate the evaluation with the article**/
 		articleEntity.getEvaluations().add(evalEntity);
@@ -82,9 +96,9 @@ public class EvaluationService
 		String title = bundle.get("article");
 		EvaluationDAOFactory factory = new EvaluationDAOFactory();
 		EvaluationDAO evalDao = factory.createDAO();
-		Transaction tx = evalDao.beginTransaction();
+		//Transaction tx = evalDao.beginTransaction();
 		Evaluation[] evaluations = evalDao.getEvaluationsFromArticle(title);
-		evalDao.commit(tx);
+		//evalDao.commit(tx);
 		return evaluations;
 	}
 }
