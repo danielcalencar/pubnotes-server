@@ -11,6 +11,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Transaction;
+
 import com.sun.xml.bind.v2.runtime.Name;
 
 import br.ufrn.dimap.pubnote.dao.ArticleDAO;
@@ -47,6 +49,7 @@ public class EvaluationService
 		Article article = evaluation.getArticle();
 		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
 		
+		Transaction tx = articleDao.beginTransaction();
 		if(articleEntity == null)
 		{
 			/**in that case we must persist the article **/
@@ -59,6 +62,7 @@ public class EvaluationService
 		/** now lets associate the evaluation with the article**/
 		articleEntity.getEvaluations().add(evalEntity);
 		articleDao.update(articleEntity);
+		articleDao.commit(tx);
 		return Response.status(201).build();
 	}
 	
@@ -77,7 +81,9 @@ public class EvaluationService
 		String title = bundle.get("article");
 		EvaluationDAOFactory factory = new EvaluationDAOFactory();
 		EvaluationDAO evalDao = factory.createDAO();
+		Transaction tx = evalDao.beginTransaction();
 		Evaluation[] evaluations = evalDao.getEvaluationsFromArticle(title);
+		evalDao.commit(tx);
 		return evaluations;
 	}
 }

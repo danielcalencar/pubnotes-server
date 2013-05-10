@@ -2,6 +2,7 @@ package br.ufrn.dimap.pubnote.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistryBuilder;
 
@@ -21,6 +22,10 @@ public abstract class DAO<T> {
 	public abstract T load(long id);
 	
 	public abstract void update(T obj);
+	
+	public abstract void commit(Transaction transaction);
+	
+	public abstract Transaction beginTransaction();
 	
 	
 	/**
