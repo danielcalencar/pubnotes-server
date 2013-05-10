@@ -53,7 +53,6 @@ public class ArticleEntity implements Serializable
 		this.eventInformation = article.getEventInformation();
 		this.title = article.getTitle();
 		this.remoteLocation = article.getRemoteLocation();
-		this.id = article.getId();
 	}
 	
 	@Id

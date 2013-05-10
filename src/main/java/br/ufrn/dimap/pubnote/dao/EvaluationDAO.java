@@ -3,6 +3,7 @@ package br.ufrn.dimap.pubnote.dao;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import br.ufrn.dimap.pubnote.domain.Article;
@@ -24,9 +25,7 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 	
 	public void persist(EvaluationEntity obj) 
 	{
-		Transaction tx = session.beginTransaction();
 		session.persist(obj);
-		tx.commit();
 	}
 	
 	public Evaluation[] getEvaluationsFromArticle(String title)
@@ -68,9 +67,21 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 	@Override
 	public void update(EvaluationEntity obj) 
 	{
-		Transaction tx = session.beginTransaction();
 		session.update(obj);
-		tx.commit();
+	}
+
+	@Override
+	public void commit(Transaction transaction) 
+	{
+		transaction.commit();
+		
+	}
+
+	@Override
+	public Transaction beginTransaction() 
+	{
+		return session.beginTransaction();
+		
 	}
 
 }

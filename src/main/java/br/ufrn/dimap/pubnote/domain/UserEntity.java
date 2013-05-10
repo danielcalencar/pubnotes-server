@@ -19,6 +19,19 @@ public class UserEntity implements Serializable{
 	
 	private String email;
 
+	public UserEntity(){
+		super();
+	}
+	
+	public UserEntity(User user){
+		super();
+		
+		this.setId(user.getId());
+		this.setUsername(user.getUsername());
+		this.setPassword(user.getPassword());
+		this.setEmail(user.getUseremail());
+	}
+	
 	@Id
 	@GeneratedValue
 	public long getId() {
