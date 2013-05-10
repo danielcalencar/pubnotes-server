@@ -51,10 +51,6 @@ public class EvaluationService
 		evalDao = evalFactory.createDAO();
 		articleDao = articleFactory.createDAO();
 		
-		System.out.println("==========");
-		System.out.println(evaluation.getUser());
-		System.out.println("==========");
-		
 		/** first we must verify if the article already exists **/
 		Article article = evaluation.getArticle();
 		User user = evaluation.getUser();
