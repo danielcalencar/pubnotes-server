@@ -11,16 +11,22 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Transaction;
+
 import com.sun.xml.bind.v2.runtime.Name;
 
 import br.ufrn.dimap.pubnote.dao.ArticleDAO;
 import br.ufrn.dimap.pubnote.dao.ArticleDAOFactory;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
+import br.ufrn.dimap.pubnote.dao.UserDAO;
+import br.ufrn.dimap.pubnote.dao.UserDAOFactory;
 import br.ufrn.dimap.pubnote.domain.Article;
 import br.ufrn.dimap.pubnote.domain.ArticleEntity;
 import br.ufrn.dimap.pubnote.domain.Evaluation;
 import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
+import br.ufrn.dimap.pubnote.domain.User;
+import br.ufrn.dimap.pubnote.domain.UserEntity;
 
 @Path( "/evaluation" )
 @Consumes( MediaType.APPLICATION_JSON )
@@ -32,6 +38,8 @@ public class EvaluationService
 	EvaluationDAO evalDao;
 	ArticleDAOFactory articleFactory = new ArticleDAOFactory();
 	ArticleDAO articleDao;
+	UserDAOFactory userFactory = new UserDAOFactory();
+	UserDAO userDao;
 	
 	/**
 	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id_user":"1", "id_article":"1", "originality":"2.4", "contribution":"4.2", "relevance":"2.3", "readability":"4.6", "relatedWorks":"4.5", "reviewerFamiliarity":"2.4"}' http://localhost:8080/pubnote.server/rest/evaluation/  
@@ -45,20 +53,32 @@ public class EvaluationService
 		
 		/** first we must verify if the article already exists **/
 		Article article = evaluation.getArticle();
+		User user = evaluation.getUser();
+		Transaction tx = articleDao.beginTransaction();
 		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
-		
 		if(articleEntity == null)
 		{
 			/**in that case we must persist the article **/
 			articleEntity = new ArticleEntity(article);
 			articleDao.persist(articleEntity);
 		}
+		
+		/** load the user from the database 
+		 * the user already exists**/
+		userDao = userFactory.createDAO();
+		UserEntity userEntity = userDao.load(user.getId());
+		
 		/** lets persist the evaluation **/
 		EvaluationEntity evalEntity = new EvaluationEntity(evaluation);
+		evalEntity.setArticle(articleEntity);
+		evalEntity.setUser(userEntity);
 		evalDao.persist(evalEntity);
+		
 		/** now lets associate the evaluation with the article**/
 		articleEntity.getEvaluations().add(evalEntity);
 		articleDao.update(articleEntity);
+		
+		articleDao.commit(tx);
 		return Response.status(201).build();
 	}
 	
@@ -77,7 +97,9 @@ public class EvaluationService
 		String title = bundle.get("article");
 		EvaluationDAOFactory factory = new EvaluationDAOFactory();
 		EvaluationDAO evalDao = factory.createDAO();
+		//Transaction tx = evalDao.beginTransaction();
 		Evaluation[] evaluations = evalDao.getEvaluationsFromArticle(title);
+		//evalDao.commit(tx);
 		return evaluations;
 	}
 }

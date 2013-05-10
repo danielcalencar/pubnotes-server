@@ -1,6 +1,7 @@
 package br.ufrn.dimap.pubnote.dao;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import br.ufrn.dimap.pubnote.domain.ArticleEntity;
@@ -14,9 +15,7 @@ public class ArticleDAO extends DAO<ArticleEntity>
 
 	@Override
 	public void persist(ArticleEntity obj) {
-		Transaction tx = session.beginTransaction();
 		session.persist(obj);
-		tx.commit();
 	}
 
 	@Override
@@ -32,11 +31,17 @@ public class ArticleDAO extends DAO<ArticleEntity>
 		return entity;
 	}
 
-	@Override
 	public void update(ArticleEntity obj) {
-		Transaction tx = session.beginTransaction();
 		session.update(obj);
-		tx.commit();
+	}
+
+	public void commit(Transaction transaction) {
+		transaction.commit();
+		
+	}
+
+	public Transaction beginTransaction() {
+		return session.beginTransaction();
 	}
 
 
