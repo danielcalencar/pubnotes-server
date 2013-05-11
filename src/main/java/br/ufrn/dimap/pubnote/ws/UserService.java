@@ -7,6 +7,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Transaction;
+
 import br.ufrn.dimap.pubnote.dao.ProfileDAO;
 import br.ufrn.dimap.pubnote.dao.ProfileFactory;
 import br.ufrn.dimap.pubnote.dao.UserDAO;
@@ -44,6 +46,8 @@ public class UserService {
 
 		/** first we must verify if the profile already exists **/
 		Profile profile = user.getUserprofile();
+		
+		Transaction tx = userDAO.beginTransaction();
 		ProfileEntity profileEntity = profileDAO.load(profile.getId());
 		
 		if(profileEntity == null){
@@ -55,6 +59,7 @@ public class UserService {
 		entity.setUserprofile(profileEntity);
 		userDAO.persist(entity);
 		
+		tx.commit();
 		return Response.status(201).build();
 	}
 	

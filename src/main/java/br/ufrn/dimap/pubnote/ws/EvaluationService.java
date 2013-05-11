@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -101,5 +102,59 @@ public class EvaluationService
 		Evaluation[] evaluations = evalDao.getEvaluationsFromArticle(title);
 		//evalDao.commit(tx);
 		return evaluations;
+	}
+	
+	@PUT
+	public Response saveOrUpdateEvaluation(Evaluation evaluation){		
+		evalDao = evalFactory.createDAO();
+		articleDao = articleFactory.createDAO();
+		
+		/** first we must verify if the article already exists **/
+		Article article = evaluation.getArticle();
+		User user = evaluation.getUser();
+		Transaction tx = articleDao.beginTransaction();
+		ArticleEntity articleEntity = articleDao.loadByTitle(article.getTitle());
+		if(articleEntity == null)
+		{
+			/**in that case we must persist the article **/
+			articleEntity = new ArticleEntity(article);
+			articleDao.persist(articleEntity);
+		}
+		
+		/** load the user from the database 
+		 * the user already exists**/
+		userDao = userFactory.createDAO();
+		UserEntity userEntity = userDao.load(user.getId());
+		
+		/** lets persist or update the evaluation **/
+		EvaluationEntity evalEntity = (EvaluationEntity) evalDao.load(evaluation.getId());
+		if(evalEntity == null)
+		{
+			evalEntity = new EvaluationEntity(evaluation);
+			evalEntity.setArticle(articleEntity);
+			evalEntity.setUser(userEntity);
+			evalDao.persist(evalEntity);
+			/** now lets associate the evaluation with the article**/
+			articleEntity.getEvaluations().add(evalEntity);
+			articleDao.update(articleEntity);
+		}
+		else
+		{
+			evalDao.update(evalEntity);
+		}
+		
+		articleDao.commit(tx);
+		return Response.status(201).build();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Evaluation getEvaluationInCourse(@QueryParam("id") String id)
+	{
+		long userId = Long.valueOf(id);
+		evalDao = evalFactory.createDAO();
+		EvaluationEntity evalEntity = evalDao.getEvaluationFromUser(userId);
+		Evaluation eval = evalEntity.convertToEvaluation();
+		return eval;
 	}
 }

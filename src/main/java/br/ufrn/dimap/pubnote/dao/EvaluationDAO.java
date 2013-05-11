@@ -18,10 +18,11 @@ import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 public class EvaluationDAO extends DAO<EvaluationEntity> 
 {
 
-	private static final String EVALUATIONS_FROM_ARTICLE_QUERY = 
-			"from Evaluation e where e.article.title = :title";
+	private static final String EVALUATIONS_FROM_ARTICLE = 
+			"from Evaluation e where e.article.title = :title and e.published = :published";
 	private static final String ALL_EVALUATIONS = 
 			"from Evaluation e ";
+	private static final String EVALUATION_FROM_USER = "from evaluation e where e.user.id = :id";
 	
 	public void persist(EvaluationEntity obj) 
 	{
@@ -30,9 +31,10 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 	
 	public Evaluation[] getEvaluationsFromArticle(String title)
 	{
-		String hql = EVALUATIONS_FROM_ARTICLE_QUERY;
+		String hql = EVALUATIONS_FROM_ARTICLE;
 		Query query = session.createQuery(hql);
 		query.setParameter("title", title);
+		query.setParameter("published", true);
 		List<EvaluationEntity> evaluations = query.list();
 		Evaluation[] evalArray = new Evaluation[evaluations.size()];
 		for(int i = 0; i < evalArray.length; i++)
@@ -55,6 +57,15 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 		}
 		
 		return evalArray;
+	}
+	
+	public EvaluationEntity getEvaluationFromUser(long userId)
+	{
+		String hql = EVALUATION_FROM_USER;
+		Query query = session.createQuery(hql);
+		query.setParameter("id", userId);
+		EvaluationEntity eval = (EvaluationEntity) query.uniqueResult();
+		return eval;
 	}
 
 	@Override
@@ -81,6 +92,13 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 	public Transaction beginTransaction() 
 	{
 		return session.beginTransaction();
+		
+	}
+
+	@Override
+	public void persistOrUpdate(EvaluationEntity obj) 
+	{
+		session.saveOrUpdate(obj);
 		
 	}
 
