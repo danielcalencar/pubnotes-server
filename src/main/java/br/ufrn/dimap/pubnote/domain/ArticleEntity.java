@@ -10,7 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 
@@ -81,6 +83,7 @@ public class ArticleEntity implements Serializable
 		this.remoteLocation = remoteLocation;
 	}
 	
+	@Transient
 	public String generateFileName(){
 		return "IEEE_-_ARTICLENAME" +  System.currentTimeMillis() + ".pdf";
 	}
@@ -103,6 +106,7 @@ public class ArticleEntity implements Serializable
 	}
 
 	@ElementCollection
+	@JoinTable(name="article_authors")
 	public List<String> getAuthors() {
 		return authors;
 	}
