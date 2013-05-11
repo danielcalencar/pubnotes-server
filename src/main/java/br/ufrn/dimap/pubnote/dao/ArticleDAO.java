@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import br.ufrn.dimap.pubnote.domain.ArticleEntity;
+import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 
 /*
  * This class is responsbile for the ArticleEntity database operations
@@ -42,6 +43,13 @@ public class ArticleDAO extends DAO<ArticleEntity>
 
 	public Transaction beginTransaction() {
 		return session.beginTransaction();
+	}
+	
+	@Override
+	public void persistOrUpdate(ArticleEntity obj) 
+	{
+		session.saveOrUpdate(obj);
+		
 	}
 
 

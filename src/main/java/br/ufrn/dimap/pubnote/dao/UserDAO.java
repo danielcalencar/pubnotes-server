@@ -3,6 +3,7 @@ package br.ufrn.dimap.pubnote.dao;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 
+import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
 
 /*
@@ -41,5 +42,12 @@ public class UserDAO extends DAO<UserEntity>
 
 	public Transaction beginTransaction() {
 		return session.beginTransaction();
+	}
+	
+	@Override
+	public void persistOrUpdate(UserEntity obj) 
+	{
+		session.saveOrUpdate(obj);
+		
 	}
 }
