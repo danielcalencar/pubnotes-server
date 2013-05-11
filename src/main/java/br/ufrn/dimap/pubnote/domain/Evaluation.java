@@ -12,13 +12,9 @@ import java.util.Date;
 public class Evaluation implements Serializable 
 {
 	
-	private static final long serialVersionUID = 901427335996618360L;
-	
 	private User user;	
 	
-	/** now we must pass the article information too **/
 	private Article article;
-	
 	
 	private String reviewerNotes;	
 

@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 
 public class Article implements Serializable 
 {
-	private static final long serialVersionUID = 1959723888847543280L;
-
 	private long id;
 	
 	private String title;
