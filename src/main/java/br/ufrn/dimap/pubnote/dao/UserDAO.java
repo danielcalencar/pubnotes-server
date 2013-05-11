@@ -1,10 +1,8 @@
 package br.ufrn.dimap.pubnote.dao;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import br.ufrn.dimap.pubnote.domain.ArticleEntity;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
 
 /*
@@ -44,6 +42,4 @@ public class UserDAO extends DAO<UserEntity>
 	public Transaction beginTransaction() {
 		return session.beginTransaction();
 	}
-
-
 }

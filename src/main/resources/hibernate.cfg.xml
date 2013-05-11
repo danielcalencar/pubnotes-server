@@ -34,10 +34,16 @@
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		
 		<!-- MAPPINGS HERE -->
+
+		<mapping  class="br.ufrn.dimap.pubnote.domain.Evaluation"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.User"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.UserEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ArticleEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.EvaluationEntity"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.Profile"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.ProfileEntity"/>
 		
+
 		
 	</session-factory>
 </hibernate-configuration>
