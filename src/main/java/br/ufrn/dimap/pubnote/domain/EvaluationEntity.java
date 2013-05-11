@@ -167,8 +167,15 @@ public class EvaluationEntity implements Serializable
 		eval.setRelatedWorks(this.getRelatedWorks());
 		eval.setRelevance(this.getRelevance());
 		eval.setReviewerFamiliarity(this.getReviewerFamiliarity());
-		eval.setReviewerNotes(this.getReviewerNotes());
-		eval.setUser(this.getUser().convertToUser()); // Exceção aqui
+		if(this.getReviewerNotes() != null)
+		{
+			eval.setReviewerNotes(this.getReviewerNotes());
+		}
+		else
+		{
+			eval.setReviewerNotes("");
+		}
+		eval.setUser(this.getUser().convertToUser());
 		eval.setPublished(this.getPublished());
 		eval.setArticle(this.getArticle().convertToArticle());
 		return eval;
