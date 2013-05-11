@@ -2,6 +2,7 @@ package br.ufrn.dimap.pubnote.dao;
 
 import org.hibernate.Transaction;
 
+import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
 import br.ufrn.dimap.pubnote.domain.ProfileEntity;
 
 public class ProfileDAO extends DAO<ProfileEntity>{
@@ -35,6 +36,13 @@ public class ProfileDAO extends DAO<ProfileEntity>{
 	public Transaction beginTransaction() 
 	{
 		return session.beginTransaction();
+	}
+	
+	@Override
+	public void persistOrUpdate(ProfileEntity obj) 
+	{
+		session.saveOrUpdate(obj);
+		
 	}
 	
 	

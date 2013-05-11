@@ -27,6 +27,8 @@ public abstract class DAO<T> {
 	
 	public abstract Transaction beginTransaction();
 	
+	public abstract void persistOrUpdate(T obj);
+	
 	
 	/**
 	 * building session
