@@ -31,19 +31,16 @@
 		<property name="hibernate.show_sql">true</property>
 
 		<!-- Drop and re-create the database schema on startup -->
-		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.hbm2ddl.auto">create</property>
 		
 		<!-- MAPPINGS HERE -->
 
-		<mapping  class="br.ufrn.dimap.pubnote.domain.Evaluation"/>
-		<mapping  class="br.ufrn.dimap.pubnote.domain.User"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.UserEntity"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.FriendEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ArticleEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.EvaluationEntity"/>
-		<mapping  class="br.ufrn.dimap.pubnote.domain.Profile"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ProfileEntity"/>
-		
-
+		<mapping  class="br.ufrn.dimap.pubnote.domain.TagEntity"/>
 		
 	</session-factory>
 </hibernate-configuration>

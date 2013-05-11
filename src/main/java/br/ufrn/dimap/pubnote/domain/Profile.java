@@ -8,7 +8,6 @@ import javax.persistence.Id;
 
 public class Profile implements Serializable {
 
-	@Id()
 	private long id;
 	//basic information
 	private String institution;

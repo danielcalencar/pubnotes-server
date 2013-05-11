@@ -1,24 +1,36 @@
 package br.ufrn.dimap.pubnote.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 @Entity(name="pubnotes_user")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+		name="discriminator",
+		discriminatorType=DiscriminatorType.STRING
+		)
+@DiscriminatorValue("U")
 public class UserEntity implements Serializable{
 	
-	@Id()
 	private long id;
 	
 	private String username;
@@ -29,81 +41,53 @@ public class UserEntity implements Serializable{
 	
 	private boolean onsigned;
 	
-	private List<String> friends;
+	private List<FriendEntity> friends;
 	
-	private List<String> tags;
+	private List<TagEntity> tags;
 	
-	private HashMap<String, List<String>> tagToUsers;
-
 	private ProfileEntity userprofile;
-
 		
 	public UserEntity(){
 		super();
 	}
+	
 	public UserEntity(User user){
 		this.setUsername(user.getUsername());
 		this.setUseremail(user.getUseremail());
 		this.setPassword(user.getPassword());
 		this.setId(user.getId());
-		this.setOnSigned(user.isOnsigned());
-		this.setFriends(user.getFriends());
-		this.setTags(user.getTags());
-		this.setTagToUsers(user.getTagToUsers());
-		ProfileEntity entity = new ProfileEntity();
-		entity.setId(user.getUserprofile().getId());
-		this.setUserprofile(entity);
+		this.setOnsigned(user.isOnsigned());
 	}
 	
-	public boolean isOnSigned() {
+	public boolean getOnsigned() {
 		return onsigned;
 	}
-	public void setOnSigned(boolean onSigned) {
+	public void setOnsigned(boolean onSigned) {
 		this.onsigned = onSigned;
 	}
 	
-	@ElementCollection
-	public List<String> getFriends() {
+	@OneToMany
+	public List<FriendEntity> getFriends() {
 		return friends;
 	}
-	public void setFriends(List<String> friends) {
+	public void setFriends(List<FriendEntity> friends) {
 		this.friends = friends;
 	}
 	
-	@ElementCollection
-	public List<String> getTags() {
+	@OneToMany
+	public List<TagEntity> getTags() {
 		return tags;
 	}
-	public void setTags(List<String> tags) {
+	public void setTags(List<TagEntity> tags) {
 		this.tags = tags;
 	}
 	
-	//DUVIDA
-	public HashMap<String, List<String>> getTagToUsers() {
-		return tagToUsers;
-	}
-	public void setTagToUsers(HashMap<String, List<String>> tagToUsers) {
-		this.tagToUsers = tagToUsers;
-	}
-	
+	@ManyToOne
 	public ProfileEntity getUserprofile() {
 		return userprofile;
 	}
 	public void setUserprofile(ProfileEntity userprofile) {
 		this.userprofile = userprofile;
-	}
-
-	public UserEntity(){
-		super();
-	}
-	
-	public UserEntity(User user){
-		super();
-		
-		this.setId(user.getId());
-		this.setUsername(user.getUsername());
-		this.setPassword(user.getPassword());
-		this.setEmail(user.getUseremail());
 	}
 	
 	@Id
@@ -145,13 +129,33 @@ public class UserEntity implements Serializable{
 	{
 		User user = new User();
 		user.setUseremail(this.getUseremail());
-		user.setID(this.getId());
+		user.setId(this.getId());
 		user.setPassword(this.getPassword());
 		user.setUsername(this.getUsername());
-		user.setOnsigned(this.isOnSigned());
-		user.setFriends(this.getFriends());
-		user.setTags(this.getTags());
-		user.setTagToUsers(this.getTagToUsers());
+		user.setOnsigned(this.getOnsigned());
+		
+		List<Friend> friends = new ArrayList<Friend>();
+		if(this.getFriends() != null)
+		{
+			for(FriendEntity fe : this.getFriends())
+			{
+				Friend friend = fe.convertToFriend();
+				friends.add(friend);
+			}
+		}
+		user.setFriends(friends);
+		
+		List<Tag> tags = new ArrayList<Tag>();
+		if(this.getTags() != null)
+		{
+			for(TagEntity te : this.getTags())
+			{
+				Tag tag = te.convertToTag();
+				tags.add(tag);
+			}
+		}
+		user.setTags(tags);
+		
 		user.setUserprofile(this.getUserprofile().convertToProfile());
 		return user;
 	}
