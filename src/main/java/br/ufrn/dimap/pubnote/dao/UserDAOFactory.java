@@ -6,5 +6,4 @@ public class UserDAOFactory implements DAOFactory
 	public UserDAO createDAO() {
 		return new UserDAO();
 	}
-
 }
