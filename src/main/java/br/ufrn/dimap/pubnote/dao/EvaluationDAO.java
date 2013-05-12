@@ -22,7 +22,8 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 			"from Evaluation e where e.article.title = :title and e.published = :published";
 	private static final String ALL_EVALUATIONS = 
 			"from Evaluation e ";
-	private static final String EVALUATION_FROM_USER = "from evaluation e where e.user.id = :id";
+	private static final String EVALUATION_FROM_USER_ARTICLE = 
+			"from Evaluation e where e.user.id = :id and e.article.title = :title";
 	
 	public void persist(EvaluationEntity obj) 
 	{
@@ -59,11 +60,12 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 		return evalArray;
 	}
 	
-	public EvaluationEntity getEvaluationFromUser(long userId)
+	public EvaluationEntity getEvaluationFromUserArticle(long userId, String article)
 	{
-		String hql = EVALUATION_FROM_USER;
+		String hql = EVALUATION_FROM_USER_ARTICLE;
 		Query query = session.createQuery(hql);
 		query.setParameter("id", userId);
+		query.setParameter("title", article);
 		EvaluationEntity eval = (EvaluationEntity) query.uniqueResult();
 		return eval;
 	}

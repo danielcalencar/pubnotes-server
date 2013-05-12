@@ -89,13 +89,12 @@ public class EvaluationService
 	 * @param user
 	 * @return
 	 */	
-	@POST
+	@GET
 	@Path("/evaluationsFromArticle")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Evaluation[] retrieveEvaluations(Map<String,String> bundle)
+	public Evaluation[] retrieveEvaluations(@QueryParam("title") String title)
 	{
-		String title = bundle.get("article");
 		EvaluationDAOFactory factory = new EvaluationDAOFactory();
 		EvaluationDAO evalDao = factory.createDAO();
 		//Transaction tx = evalDao.beginTransaction();
@@ -128,7 +127,8 @@ public class EvaluationService
 		
 		/** lets persist or update the evaluation **/
 		EvaluationEntity evalEntity = (EvaluationEntity) evalDao.load(evaluation.getId());
-		if(evalEntity == null)
+		long id = evalEntity.getId();
+		if(id == 0)
 		{
 			evalEntity = new EvaluationEntity(evaluation);
 			evalEntity.setArticle(articleEntity);
@@ -136,10 +136,11 @@ public class EvaluationService
 			evalDao.persist(evalEntity);
 			/** now lets associate the evaluation with the article**/
 			articleEntity.getEvaluations().add(evalEntity);
-			articleDao.update(articleEntity);
+			articleDao.persist(articleEntity);
 		}
 		else
 		{
+			evalEntity.updateValues(evaluation);
 			evalDao.update(evalEntity);
 		}
 		
@@ -149,12 +150,21 @@ public class EvaluationService
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Evaluation getEvaluationInCourse(@QueryParam("id") String id)
+	public Evaluation getEvaluationInCourse(@QueryParam("id") String id, 
+			@QueryParam("article") String article)
 	{
 		long userId = Long.valueOf(id);
 		evalDao = evalFactory.createDAO();
-		EvaluationEntity evalEntity = evalDao.getEvaluationFromUser(userId);
-		Evaluation eval = evalEntity.convertToEvaluation();
-		return eval;
+		EvaluationEntity evalEntity = evalDao.getEvaluationFromUserArticle(userId,article);
+		if(evalEntity != null)
+		{
+			Evaluation eval = evalEntity.convertToEvaluation();
+			return eval;
+		}
+		else
+		{
+			return null;
+		}
+		
 	}
 }
