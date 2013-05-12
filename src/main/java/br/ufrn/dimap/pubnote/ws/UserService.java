@@ -33,12 +33,12 @@ public class UserService {
 	ProfileDAO profileDAO;
 	
 	/**
-	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"username":"Lucas Farias de Oliveira", "password":"senhaTopSecreta", "email":"luksrn@gmail.com"}' http://localhost:8080/pubnote.server/rest/user/register  
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"username":"Lucas Farias de Oliveira", "password":"senhaTopSecreta", "useremail":"luksrn@gmail.com"}' http://localhost:8080/pubnote.server/rest/user/register  
 	 * @param user
 	 * @return
 	 */	
 	@POST
-	@Path("/save")
+	@Path("/register")
 	public Response save(User user){
 		//criando os DAOs que acessam o BD
 		userDAO = userFactory.createDAO();
@@ -50,7 +50,7 @@ public class UserService {
 		Transaction tx = userDAO.beginTransaction();
 		ProfileEntity profileEntity = profileDAO.load(profile.getId());
 		
-		if(profileEntity == null){
+		if(profileEntity.getId() == 0){
 			profileEntity = new ProfileEntity(profile);
 			profileDAO.persist(profileEntity);
 		}
@@ -64,22 +64,83 @@ public class UserService {
 	}
 	
 	/**
-	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"username":"luksrn", "password":"senhaTopSecreta"}' http://localhost:8080/pubnote.server/rest/user/login
+	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"useremail":"ju@mail.com", "password":"1234556"}' http://localhost:8080/pubnote.server/rest/user/login
 	 * 
 	 * @param user
 	 * @return
 	 */
 	@POST
 	@Path("/login")
-	public Response login(User user){
-		LoginResponse response = new LoginResponse();		
+	public User login(User user){
+		User logado = null;
+		userDAO = userFactory.createDAO();
+		
+		Transaction tx = userDAO.beginTransaction();
+		UserEntity uentity = userDAO.loadByUsername(user.getUseremail());
 		// TODO Query in database...
-		if( user.getUsername().equalsIgnoreCase("pubnote@mail.com" ) ){			
-			response.setSuccess(true);
-			return Response.ok().entity(response).build();
+		if(user.getUseremail().equals(uentity.getUseremail()) 
+				&& user.getPassword().equals(uentity.getPassword())){			
+			logado = uentity.convertToUser();
 		}
-		response.setSuccess(false);
-		response.setMessage("Invalid login or password.");		
-		return Response.ok().entity(response).build();
+		
+		tx.commit();
+		return logado;
+	}
+	
+	
+	/**
+	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"id":"6"}' http://localhost:8080/pubnote.server/rest/user/getProfile
+	 * 
+	 * @param user
+	 * @return
+	 */
+	@POST
+	@Path("/getProfile")
+	public Profile getProfileOfUser(User user){
+		Profile profile = null;
+		userDAO = userFactory.createDAO();
+		
+		Transaction tx = userDAO.beginTransaction();
+		UserEntity uentity = userDAO.load(user.getId());
+		// TODO Query in database...
+		profile = uentity.getUserprofile().convertToProfile();
+		
+		tx.commit();
+		return profile;
+	}
+	
+	
+
+	/**
+	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"institution":"UFRN", "degree":"mestrando","location":"Macaiba", "aboutme":"Algo sobre mim"}' http://localhost:8080/pubnote.server/rest/user/saveProfile
+	 * 
+	 * @param user
+	 * @return
+	 */
+	@POST
+	@Path("/saveProfile")
+	public Response saveProfileOfUser(User user){
+		userDAO = userFactory.createDAO();
+		profileDAO = pfactory.createDAO();
+
+		Profile profile = user.getUserprofile();
+
+		Transaction tx = userDAO.beginTransaction();
+		
+		ProfileEntity profileEntity = profileDAO.load(profile.getId());
+		
+		//atualiza Profile no banco
+		if(profileEntity.getId() != 0){
+			profileDAO.update(profileEntity);
+		}
+		
+		//atualiza o Profile no usuario
+		UserEntity uentity = userDAO.load(user.getId());
+		uentity.setUserprofile(profileEntity);
+		
+		userDAO.update(uentity);
+		
+		tx.commit();
+		return Response.status(201).build();
 	}
 }
