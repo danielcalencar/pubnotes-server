@@ -181,6 +181,23 @@ public class EvaluationEntity implements Serializable
 		return eval;
 	}
 	
+	@Transient
+	public void updateValues(Evaluation evaluation)
+	{
+		this.setContribution(evaluation.getContribution());
+		this.setEvalDate(new Date());
+		this.setOriginality(evaluation.getOriginality());
+		this.setReadability(evaluation.getReadability());
+		this.setRelatedWorks(evaluation.getRelatedWorks());
+		this.setRelevance(evaluation.getRelevance());
+		this.setReviewerFamiliarity(evaluation.getReviewerFamiliarity());
+		this.setReviewerNotes(evaluation.getReviewerNotes());
+		if(evaluation.getPublished())
+		{
+			this.setPublished(true);
+		}
+	}
+	
 	public boolean getPublished() 
 	{
 		return published;
