@@ -33,4 +33,16 @@ public class FriendEntity extends UserEntity
 		friend.setUserprofile(this.getUserprofile().convertToProfile());
 		return friend;
 	}
+	
+	public User convertToUser()
+	{
+		User friend = new User();
+		friend.setId(this.getId());
+		friend.setOnsigned(this.getOnsigned());
+		friend.setPassword(this.getPassword());
+		friend.setUseremail(this.getUseremail());
+		friend.setUsername(this.getUsername());
+		friend.setUserprofile(this.getUserprofile().convertToProfile());
+		return friend;
+	}
 }
