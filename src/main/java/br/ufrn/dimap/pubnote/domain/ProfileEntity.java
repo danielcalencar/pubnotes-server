@@ -1,6 +1,7 @@
 package br.ufrn.dimap.pubnote.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +33,21 @@ public class ProfileEntity implements Serializable {
 	public ProfileEntity(Profile profile) {
 		super();
 		
+		this.setId(profile.getId());
+		this.setAboutme(profile.getAboutme());
+		this.setBirthday(profile.getBirthday());
+		this.setDegree(profile.getDegree());
+		this.setEmail(profile.getEmail());
+		this.setFacebook(profile.getFacebook());
+		this.setGender(profile.getGender());
+		this.setInstitution(profile.getInstitution());
+		this.setLocation(profile.getLocation());
+		this.setPhone(profile.getPhone());
+	}
+	
+	@Transient
+	public void updateValues(Profile profile)
+	{
 		this.setId(profile.getId());
 		this.setAboutme(profile.getAboutme());
 		this.setBirthday(profile.getBirthday());
