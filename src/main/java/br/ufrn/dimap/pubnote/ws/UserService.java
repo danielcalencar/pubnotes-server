@@ -178,22 +178,23 @@ public class UserService {
 		Transaction tx = userDAO.beginTransaction();
 		UserEntity entity = userDAO.load(user.getId());
 		
-		for (int i = 0; i < friends.size(); i++) {
-			UserEntity userfriend = (UserEntity) userDAO.load(friends.get(i).getId());
-			FriendEntity friend = new FriendEntity();
-			
-			TagEntity tagentity = new TagEntity();
-			
-			friend.setId(userfriend.getId());
-			friend.setPassword(userfriend.getPassword());
-			friend.setUseremail(userfriend.getUseremail());
-			friend.setUsername(userfriend.getUsername());
-			friend.setUserprofile(userfriend.getUserprofile());
-			tagentity.setDescription("default");
-			friend.setTag(tagentity);
-			
-			entity.getFriends().add(friend);
-		}
+		//for (int i = 0; i < friends.size(); i++) {
+			UserEntity userfriend = (UserEntity) userDAO.load(friends.get(friends.size() - 1).getId());
+
+				FriendEntity friend = new FriendEntity();
+				
+				TagEntity tagentity = new TagEntity();
+				
+				friend.setId(userfriend.getId());
+				friend.setPassword(userfriend.getPassword());
+				friend.setUseremail(userfriend.getUseremail());
+				friend.setUsername(userfriend.getUsername());
+				friend.setUserprofile(userfriend.getUserprofile());
+				tagentity.setDescription("default");
+				friend.setTag(tagentity);
+				
+				entity.getFriends().add(friend);
+		//}
 
 		userDAO.update(entity);
 		
