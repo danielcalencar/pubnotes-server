@@ -27,7 +27,7 @@ public class FriendEntity extends UserEntity
 		friend.setId(this.getId());
 		friend.setOnsigned(this.getOnsigned());
 		friend.setPassword(this.getPassword());
-		//friend.setTag(this.getTag().convertToTag());
+		friend.setTag(this.getTag().convertToTag());
 		friend.setUseremail(this.getUseremail());
 		friend.setUsername(this.getUsername());
 		friend.setUserprofile(this.getUserprofile().convertToProfile());

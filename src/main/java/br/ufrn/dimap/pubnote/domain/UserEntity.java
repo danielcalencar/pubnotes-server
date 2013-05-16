@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -54,6 +55,8 @@ public class UserEntity implements Serializable{
 		this.setPassword(user.getPassword());
 		this.setId(user.getId());
 		this.setOnsigned(user.isOnsigned());
+		this.friends = new ArrayList<FriendEntity>();
+		this.tags = new ArrayList<TagEntity>();
 	}
 	
 	public boolean getOnsigned() {

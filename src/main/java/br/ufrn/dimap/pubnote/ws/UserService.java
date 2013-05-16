@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.Transaction;
+import org.omg.CORBA.TCKind;
 
 import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
 import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
@@ -168,38 +169,43 @@ public class UserService {
 	 */
 	@POST
 	@Path("/addFriends")
-	public Response addFriendsOfUser(User user){
-		userDAO = userFactory.createDAO();
-		List<Friend> friends = new ArrayList<Friend>();
-
-		for (int i = 0; i < user.getFriends().size(); i++) {
-			friends.add(user.getFriends().get(i));
-		}
-		Transaction tx = userDAO.beginTransaction();
-		UserEntity entity = userDAO.load(user.getId());
+	public Response addFriendsOfUser(User user)
+	{	
+			userDAO = userFactory.createDAO();
+			tagDAO = tfactory.createDAO();
 		
-		//for (int i = 0; i < friends.size(); i++) {
-			UserEntity userfriend = (UserEntity) userDAO.load(friends.get(friends.size() - 1).getId());
-
-				FriendEntity friend = new FriendEntity();
-				
-				TagEntity tagentity = new TagEntity();
-				
-				friend.setId(userfriend.getId());
-				friend.setPassword(userfriend.getPassword());
-				friend.setUseremail(userfriend.getUseremail());
-				friend.setUsername(userfriend.getUsername());
-				friend.setUserprofile(userfriend.getUserprofile());
-				tagentity.setDescription("default");
-				friend.setTag(tagentity);
-				
-				entity.getFriends().add(friend);
-		//}
-
-		userDAO.update(entity);
+			// isto aqui está redundante, pois já tenho isso no meu objeto user ;-)
+			//List<Friend> friends = new ArrayList<Friend>();
+			//for (int i = 0; i < user.getFriends().size(); i++) {
+			//friends.add(user.getFriends().get(i));
+			//}	
 		
-		tx.commit();
-		return Response.status(201).build();
+			Transaction tx = userDAO.beginTransaction();
+			//pegando o usuario atual
+			UserEntity entity = userDAO.load(user.getId());
+			TagEntity tagentity = new TagEntity();
+			tagentity.setDescription("default");
+			tagDAO.persist(tagentity); //isso nao precisa ficar dentro do for
+			//agora vou adicionar os amiguinhos dele
+			for(User friend : user.getFriends())
+			{
+			//nao eh desse jeito...
+			//UserEntity userfriend = (UserEntity)userDAO.load(friends.get(friends.size() - 1).getId());	
+			UserEntity userfriend = (UserEntity) userDAO.load(friend.getId());
+			FriendEntity friendfriendentity = new FriendEntity();	
+			friendfriendentity.setId(userfriend.getId());
+			friendfriendentity.setPassword(userfriend.getPassword());
+			friendfriendentity.setUseremail(userfriend.getUseremail());
+			friendfriendentity.setUsername(userfriend.getUsername());
+			friendfriendentity.setUserprofile(userfriend.getUserprofile());	
+			friendfriendentity.setTag(tagentity);
+			userDAO.merge(friendfriendentity); //creio que aqui va precisar de um merge
+		
+			entity.getFriends().add(friendfriendentity);
+			userDAO.update(entity);
+			}
+			tx.commit();
+			return Response.status(201).build();
 	}
 	
 	/**
