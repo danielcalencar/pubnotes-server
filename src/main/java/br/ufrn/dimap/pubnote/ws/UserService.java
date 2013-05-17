@@ -1,6 +1,5 @@
 package br.ufrn.dimap.pubnote.ws;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -13,28 +12,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.Transaction;
-import org.omg.CORBA.TCKind;
 
-import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
-import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
 import br.ufrn.dimap.pubnote.dao.ProfileDAO;
 import br.ufrn.dimap.pubnote.dao.ProfileFactory;
 import br.ufrn.dimap.pubnote.dao.TagDAO;
 import br.ufrn.dimap.pubnote.dao.TagDAOFactory;
 import br.ufrn.dimap.pubnote.dao.UserDAO;
 import br.ufrn.dimap.pubnote.dao.UserDAOFactory;
-import br.ufrn.dimap.pubnote.domain.Article;
-import br.ufrn.dimap.pubnote.domain.ArticleEntity;
-import br.ufrn.dimap.pubnote.domain.Evaluation;
-import br.ufrn.dimap.pubnote.domain.Friend;
-import br.ufrn.dimap.pubnote.domain.FriendEntity;
 import br.ufrn.dimap.pubnote.domain.Profile;
 import br.ufrn.dimap.pubnote.domain.ProfileEntity;
 import br.ufrn.dimap.pubnote.domain.Tag;
 import br.ufrn.dimap.pubnote.domain.TagEntity;
 import br.ufrn.dimap.pubnote.domain.User;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
-import br.ufrn.dimap.pubnote.ws.responses.LoginResponse;
 
 @Path( "/user" )
 @Consumes( MediaType.APPLICATION_JSON )
@@ -174,36 +164,17 @@ public class UserService {
 			userDAO = userFactory.createDAO();
 			tagDAO = tfactory.createDAO();
 		
-			// isto aqui está redundante, pois já tenho isso no meu objeto user ;-)
-			//List<Friend> friends = new ArrayList<Friend>();
-			//for (int i = 0; i < user.getFriends().size(); i++) {
-			//friends.add(user.getFriends().get(i));
-			//}	
-		
 			Transaction tx = userDAO.beginTransaction();
 			//pegando o usuario atual
 			UserEntity entity = userDAO.load(user.getId());
-			TagEntity tagentity = new TagEntity();
-			tagentity.setDescription("default");
-			tagDAO.persist(tagentity); //isso nao precisa ficar dentro do for
 			//agora vou adicionar os amiguinhos dele
-			for(User friend : user.getFriends())
-			{
-			//nao eh desse jeito...
-			//UserEntity userfriend = (UserEntity)userDAO.load(friends.get(friends.size() - 1).getId());	
-			UserEntity userfriend = (UserEntity) userDAO.load(friend.getId());
-			FriendEntity friendfriendentity = new FriendEntity();	
-			friendfriendentity.setId(userfriend.getId());
-			friendfriendentity.setPassword(userfriend.getPassword());
-			friendfriendentity.setUseremail(userfriend.getUseremail());
-			friendfriendentity.setUsername(userfriend.getUsername());
-			friendfriendentity.setUserprofile(userfriend.getUserprofile());	
-			friendfriendentity.setTag(tagentity);
-			userDAO.merge(friendfriendentity); //creio que aqui va precisar de um merge
-		
-			entity.getFriends().add(friendfriendentity);
-			userDAO.update(entity);
-			}
+			//for(User friend : user.getFriends())
+			//{
+				int index = user.getFriends().size() - 1;
+				UserEntity userfriend = (UserEntity) userDAO.load(user.getFriends().get(index).getId());
+				entity.getFriends().add(userfriend);
+				userDAO.update(entity);
+			//}
 			tx.commit();
 			return Response.status(201).build();
 	}
@@ -238,7 +209,7 @@ public class UserService {
 		Transaction tx = userDAO.beginTransaction();
 
 		UserEntity entity = userDAO.load(user.getId());
-		List<FriendEntity> friends = entity.getFriends();
+		List<UserEntity> friends = entity.getFriends();
 		
 		User[] userArray = new User[friends.size()];
 		if(friends.size() != 0){	
@@ -265,19 +236,21 @@ public class UserService {
 		tagDAO = tfactory.createDAO();
 		
 		/** first we must verify if the tag already exists **/
-		List<Tag> tag = user.getTags();
-		
 		Transaction tx = userDAO.beginTransaction();
 		UserEntity entity = userDAO.load(user.getId());
-		TagEntity tentity = null;
-		for (int i = 0; i < tag.size(); i++) {
-			tentity = tagDAO.load(tag.get(i).getId());
+		//for(Tag tag : user.getTags()){ 
+			int index = user.getTags().size() - 1;
+			TagEntity tentity = tagDAO.load(user.getTags().get(index).getId());
 			if(tentity.getId() == 0){
 				tentity = new TagEntity();
+				tentity.setDescription(user.getTags().get(index).getDescription());
 				tagDAO.persist(tentity);
+			}else{
+				tentity.setDescription(user.getTags().get(index).getDescription());
+				tagDAO.update(tentity);
 			}
 			entity.getTags().add(tentity);
-		}
+		//}
 				
 		userDAO.update(entity);
 		

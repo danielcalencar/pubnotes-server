@@ -5,10 +5,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 
-import br.ufrn.dimap.pubnote.domain.Evaluation;
-import br.ufrn.dimap.pubnote.domain.EvaluationEntity;
-import br.ufrn.dimap.pubnote.domain.FriendEntity;
-import br.ufrn.dimap.pubnote.domain.ProfileEntity;
 import br.ufrn.dimap.pubnote.domain.User;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
 
