@@ -36,7 +36,7 @@
 		<!-- MAPPINGS HERE -->
 
 		<mapping  class="br.ufrn.dimap.pubnote.domain.UserEntity"/>
-		<mapping  class="br.ufrn.dimap.pubnote.domain.FriendEntity"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.TagUserEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ArticleEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.EvaluationEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ProfileEntity"/>

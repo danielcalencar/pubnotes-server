@@ -1,6 +1,5 @@
 package br.ufrn.dimap.pubnote.ws;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -14,23 +13,18 @@ import javax.ws.rs.core.Response;
 
 import org.hibernate.Transaction;
 
-import br.ufrn.dimap.pubnote.dao.EvaluationDAO;
-import br.ufrn.dimap.pubnote.dao.EvaluationDAOFactory;
 import br.ufrn.dimap.pubnote.dao.ProfileDAO;
 import br.ufrn.dimap.pubnote.dao.ProfileFactory;
+import br.ufrn.dimap.pubnote.dao.TagDAO;
+import br.ufrn.dimap.pubnote.dao.TagDAOFactory;
 import br.ufrn.dimap.pubnote.dao.UserDAO;
 import br.ufrn.dimap.pubnote.dao.UserDAOFactory;
-import br.ufrn.dimap.pubnote.domain.Article;
-import br.ufrn.dimap.pubnote.domain.ArticleEntity;
-import br.ufrn.dimap.pubnote.domain.Evaluation;
-import br.ufrn.dimap.pubnote.domain.Friend;
-import br.ufrn.dimap.pubnote.domain.FriendEntity;
 import br.ufrn.dimap.pubnote.domain.Profile;
 import br.ufrn.dimap.pubnote.domain.ProfileEntity;
+import br.ufrn.dimap.pubnote.domain.Tag;
 import br.ufrn.dimap.pubnote.domain.TagEntity;
 import br.ufrn.dimap.pubnote.domain.User;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
-import br.ufrn.dimap.pubnote.ws.responses.LoginResponse;
 
 @Path( "/user" )
 @Consumes( MediaType.APPLICATION_JSON )
@@ -40,8 +34,10 @@ public class UserService {
 	UserDAOFactory userFactory = new UserDAOFactory();
 	//o profile tambem deve ser persistido
 	ProfileFactory pfactory = new ProfileFactory();
+	TagDAOFactory tfactory = new TagDAOFactory();
 	UserDAO userDAO;
 	ProfileDAO profileDAO;
+	TagDAO tagDAO;
 	
 	/**
 	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"username":"Lucas Farias de Oliveira", "password":"senhaTopSecreta", "useremail":"luksrn@gmail.com"}' http://localhost:8080/pubnote.server/rest/user/register  
@@ -100,7 +96,7 @@ public class UserService {
 	
 	
 	/**
-	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"id":"6"}' http://localhost:8080/pubnote.server/rest/user/getProfile
+	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"friends":[],"userprofile":{"aboutme":"","birthday":"21-11-1989","degree":"","email":"","facebook":"","gender":"","phone":"","institution":"UFRN-DIMAp","location":"","id":5},"username":"juliana","password":"1234556","tags":[],"useremail":"ju@mail.com","id":6,"onsigned":false}' http://localhost:8080/pubnote.server/rest/user/getProfile
 	 * 
 	 * @param user
 	 * @return
@@ -123,7 +119,7 @@ public class UserService {
 	
 
 	/**
-	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"institution":"UFRN", "degree":"mestrando","location":"Macaiba", "aboutme":"Algo sobre mim"}' http://localhost:8080/pubnote.server/rest/user/saveProfile
+	 * curl -i  -H "Content-Type: application/json" -X POST -d '{"friends":[],"userprofile":{"aboutme":"estudante","birthday":"21","degree":"mestre","email":"ju@mail.com","facebook":"juju","gender":"F","phone":"23345","institution":"ufrn","location":"natal","id":5},"username":"juliana","password":"1234556","tags":[],"useremail":"ju@mail.com","id":6,"onsigned":false}' http://localhost:8080/pubnote.server/rest/user/saveProfile
 	 * 
 	 * @param user
 	 * @return
@@ -131,24 +127,24 @@ public class UserService {
 	@POST
 	@Path("/saveProfile")
 	public Response saveProfileOfUser(User user){
+		//criando os DAOs que acessam o BD
 		userDAO = userFactory.createDAO();
 		profileDAO = pfactory.createDAO();
 
+		/** first we must verify if the profile already exists **/
 		Profile profile = user.getUserprofile();
-
-		Transaction tx = userDAO.beginTransaction();
 		
+		Transaction tx = userDAO.beginTransaction();
 		ProfileEntity profileEntity = profileDAO.load(profile.getId());
 		
-		//atualiza Profile no banco
 		if(profileEntity.getId() != 0){
+			//profileEntity = new ProfileEntity(profile);
+			profileEntity.updateValues(profile);
 			profileDAO.update(profileEntity);
 		}
 		
-		//atualiza o Profile no usuario
 		UserEntity uentity = userDAO.load(user.getId());
 		uentity.setUserprofile(profileEntity);
-		
 		userDAO.update(uentity);
 		
 		tx.commit();
@@ -163,31 +159,24 @@ public class UserService {
 	 */
 	@POST
 	@Path("/addFriends")
-	public Response addFriendsOfUser(User user){
-		userDAO = userFactory.createDAO();
-		List<Friend> friends = new ArrayList<Friend>();
-
-		for (int i = 0; i < user.getFriends().size(); i++) {
-			friends.add(user.getFriends().get(i));
-		}
-		Transaction tx = userDAO.beginTransaction();
-		UserEntity entity = userDAO.load(user.getId());
+	public Response addFriendsOfUser(User user)
+	{	
+			userDAO = userFactory.createDAO();
+			tagDAO = tfactory.createDAO();
 		
-		for (int i = 0; i < friends.size(); i++) {
-			FriendEntity friend = (FriendEntity) userDAO.load(friends.get(i).getId());
-			if(friend.getId() == 0){
-				//sem tag
-				friend = new FriendEntity();
-				userDAO.persist(friend);
-			}
-			
-			entity.getFriends().add(friend);
-		}
-
-		userDAO.update(entity);
-		
-		tx.commit();
-		return Response.status(201).build();
+			Transaction tx = userDAO.beginTransaction();
+			//pegando o usuario atual
+			UserEntity entity = userDAO.load(user.getId());
+			//agora vou adicionar os amiguinhos dele
+			//for(User friend : user.getFriends())
+			//{
+				int index = user.getFriends().size() - 1;
+				UserEntity userfriend = (UserEntity) userDAO.load(user.getFriends().get(index).getId());
+				entity.getFriends().add(userfriend);
+				userDAO.update(entity);
+			//}
+			tx.commit();
+			return Response.status(201).build();
 	}
 	
 	/**
@@ -219,8 +208,8 @@ public class UserService {
 		userDAO = userFactory.createDAO();
 		Transaction tx = userDAO.beginTransaction();
 
-		UserEntity entity = userDAO.loadByUsername(user.getUsername());
-		List<FriendEntity> friends = entity.getFriends();
+		UserEntity entity = userDAO.load(user.getId());
+		List<UserEntity> friends = entity.getFriends();
 		
 		User[] userArray = new User[friends.size()];
 		if(friends.size() != 0){	
@@ -233,4 +222,41 @@ public class UserService {
 		userDAO.commit(tx);
 		return userArray;
 	}
+	
+	/**
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id":"6"}' http://localhost:8080/pubnote.server/rest/user/addTag  
+	 * @param user
+	 * @return
+	 */	
+	@POST
+	@Path("/addTag")
+	public Response addTag(User user){
+		//criando os DAOs que acessam o BD
+		userDAO = userFactory.createDAO();
+		tagDAO = tfactory.createDAO();
+		
+		/** first we must verify if the tag already exists **/
+		Transaction tx = userDAO.beginTransaction();
+		UserEntity entity = userDAO.load(user.getId());
+		//for(Tag tag : user.getTags()){ 
+			int index = user.getTags().size() - 1;
+			TagEntity tentity = tagDAO.load(user.getTags().get(index).getId());
+			if(tentity.getId() == 0){
+				tentity = new TagEntity();
+				tentity.setDescription(user.getTags().get(index).getDescription());
+				tagDAO.persist(tentity);
+			}else{
+				tentity.setDescription(user.getTags().get(index).getDescription());
+				tagDAO.update(tentity);
+			}
+			entity.getTags().add(tentity);
+		//}
+				
+		userDAO.update(entity);
+		
+		tx.commit();
+		return Response.status(201).build();
+	}
+	
+	
 }
