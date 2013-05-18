@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -14,17 +15,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 @Entity(name="pubnotes_user")
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(
-		name="discriminator",
-		discriminatorType=DiscriminatorType.STRING
-		)
-@DiscriminatorValue("U")
+
 public class UserEntity implements Serializable{
 	
 	private long id;
@@ -37,9 +34,11 @@ public class UserEntity implements Serializable{
 	
 	private boolean onsigned;
 	
-	private List<FriendEntity> friends;
+	private List<UserEntity> friends;
 	
 	private List<TagEntity> tags;
+	
+	private List<TagUserEntity> markedTags;
 	
 	private ProfileEntity userprofile;
 		
@@ -53,6 +52,9 @@ public class UserEntity implements Serializable{
 		this.setPassword(user.getPassword());
 		this.setId(user.getId());
 		this.setOnsigned(user.isOnsigned());
+		this.friends = new ArrayList<UserEntity>();
+		this.tags = new ArrayList<TagEntity>();
+		this.markedTags = new ArrayList<TagUserEntity>();
 	}
 	
 	public boolean getOnsigned() {
@@ -61,12 +63,21 @@ public class UserEntity implements Serializable{
 	public void setOnsigned(boolean onSigned) {
 		this.onsigned = onSigned;
 	}
-	
+
 	@OneToMany
-	public List<FriendEntity> getFriends() {
+	public List<TagUserEntity> getMarkedTags() {
+		return markedTags;
+	}
+
+	public void setMarkedTags(List<TagUserEntity> markedTags) {
+		this.markedTags = markedTags;
+	}
+	
+	@ManyToMany
+	public List<UserEntity> getFriends() {
 		return friends;
 	}
-	public void setFriends(List<FriendEntity> friends) {
+	public void setFriends(List<UserEntity> friends) {
 		this.friends = friends;
 	}
 	
@@ -130,13 +141,12 @@ public class UserEntity implements Serializable{
 		user.setUsername(this.getUsername());
 		user.setOnsigned(this.getOnsigned());
 		
-		List<Friend> friends = new ArrayList<Friend>();
+		/*List<User> friends = new ArrayList<User>();
 		if(this.getFriends() != null)
 		{
-			for(FriendEntity fe : this.getFriends())
+			for(UserEntity fe : this.getFriends())
 			{
-				Friend friend = fe.convertToFriend();
-				friends.add(friend);
+				friends.add(fe.convertToUser());
 			}
 		}
 		user.setFriends(friends);
@@ -151,7 +161,7 @@ public class UserEntity implements Serializable{
 			}
 		}
 		user.setTags(tags);
-		
+		*/
 		user.setUserprofile(this.getUserprofile().convertToProfile());
 		return user;
 	}

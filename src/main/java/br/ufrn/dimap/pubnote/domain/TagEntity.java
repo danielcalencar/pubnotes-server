@@ -32,7 +32,7 @@ public class TagEntity implements Serializable
 	{
 		Tag tag = new Tag();
 		tag.setDescription(this.getDescription());
-		tag.setId(this.getId());
+		tag.setId(this.getId()); 
 		return tag;
 	}
 }
