@@ -3,6 +3,7 @@ package br.ufrn.dimap.pubnote.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import javax.persistence.Transient;
  *
  */
 
-@Entity(name="Evaluation")
+@Entity(name="evaluation")
 public class EvaluationEntity implements Serializable 
 {
 	
