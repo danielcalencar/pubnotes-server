@@ -150,7 +150,7 @@ public class UserEntity implements Serializable{
 			}
 		}
 		user.setFriends(friends);
-		
+		*/
 		List<Tag> tags = new ArrayList<Tag>();
 		if(this.getTags() != null)
 		{
@@ -161,7 +161,7 @@ public class UserEntity implements Serializable{
 			}
 		}
 		user.setTags(tags);
-		*/
+		
 		user.setUserprofile(this.getUserprofile().convertToProfile());
 		return user;
 	}
