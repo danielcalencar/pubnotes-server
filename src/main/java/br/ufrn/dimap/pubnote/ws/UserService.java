@@ -11,18 +11,22 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import br.ufrn.dimap.pubnote.dao.ProfileDAO;
 import br.ufrn.dimap.pubnote.dao.ProfileFactory;
 import br.ufrn.dimap.pubnote.dao.TagDAO;
 import br.ufrn.dimap.pubnote.dao.TagDAOFactory;
+import br.ufrn.dimap.pubnote.dao.TagUserDAO;
+import br.ufrn.dimap.pubnote.dao.TagUserDAOFactory;
 import br.ufrn.dimap.pubnote.dao.UserDAO;
 import br.ufrn.dimap.pubnote.dao.UserDAOFactory;
 import br.ufrn.dimap.pubnote.domain.Profile;
 import br.ufrn.dimap.pubnote.domain.ProfileEntity;
 import br.ufrn.dimap.pubnote.domain.Tag;
 import br.ufrn.dimap.pubnote.domain.TagEntity;
+import br.ufrn.dimap.pubnote.domain.TagUserEntity;
 import br.ufrn.dimap.pubnote.domain.User;
 import br.ufrn.dimap.pubnote.domain.UserEntity;
 
@@ -35,9 +39,11 @@ public class UserService {
 	//o profile tambem deve ser persistido
 	ProfileFactory pfactory = new ProfileFactory();
 	TagDAOFactory tfactory = new TagDAOFactory();
+	TagUserDAOFactory tufactoty = new TagUserDAOFactory();
 	UserDAO userDAO;
 	ProfileDAO profileDAO;
 	TagDAO tagDAO;
+	TagUserDAO tagUserDAO;
 	
 	/**
 	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"username":"Lucas Farias de Oliveira", "password":"senhaTopSecreta", "useremail":"luksrn@gmail.com"}' http://localhost:8080/pubnote.server/rest/user/register  
@@ -86,7 +92,9 @@ public class UserService {
 		UserEntity uentity = userDAO.loadByUsername(user.getUseremail());
 		// TODO Query in database...
 		if(user.getUseremail().equals(uentity.getUseremail()) 
-				&& user.getPassword().equals(uentity.getPassword())){			
+				&& user.getPassword().equals(uentity.getPassword())){	
+			uentity.setOnsigned(true);
+			userDAO.update(uentity);
 			logado = uentity.convertToUser();
 		}
 		
@@ -250,13 +258,54 @@ public class UserService {
 				tagDAO.update(tentity);
 			}
 			entity.getTags().add(tentity);
+			userDAO.update(entity);
 		//}
 				
-		userDAO.update(entity);
-		
 		tx.commit();
 		return Response.status(201).build();
 	}
 	
+	/**
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id":"6"}' http://localhost:8080/pubnote.server/rest/user/addTag  
+	 * @param user
+	 * @return
+	 */	
+	@POST
+	@Path("/addTagUser")
+	public Response makeTagUser(User user){
+		//criando os DAOs que acessam o BD
+		userDAO = userFactory.createDAO();
+		tagDAO = tfactory.createDAO();
+		tagUserDAO = tufactoty.createDAO();
+		
+		/** first we must verify if the tag already exists **/
+		Transaction tx = userDAO.beginTransaction();
+		//usuario que foi marcado
+		UserEntity entity = userDAO.load(user.getId());
+		//pego a taguser que foi adicionada no cliente
+		int index = user.getMarkedTags().size() - 1;
+		System.out.println("Tam " + index);
+		//pegando entidades User e Tag no banco
+		TagEntity tu = tagDAO.loadByUsername(user.getMarkedTags().get(index).getTag().getDescription());
+		UserEntity u = userDAO.load(user.getMarkedTags().get(index).getUser().getId());
+		//entidade que representa a tag pelo qual o user foi marcado e quem o marcou
+		//nao precisa ser persistida no banco
+		
 	
+		TagUserEntity tuentity = tagUserDAO.load(user.getMarkedTags().get(index).getId());
+		
+		if(tuentity.getId() == 0){
+			tuentity = new TagUserEntity();
+			tuentity.setTag(tu);
+			tuentity.setUser(u);
+			tagUserDAO.persist(tuentity);
+		}
+		
+		entity.getMarkedTags().add(tuentity);	
+		
+		userDAO.update(entity);
+			
+		tx.commit();
+		return Response.status(201).build();
+	}
 }
