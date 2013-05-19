@@ -19,11 +19,11 @@ public class EvaluationDAO extends DAO<EvaluationEntity>
 {
 
 	private static final String EVALUATIONS_FROM_ARTICLE = 
-			"from Evaluation e where e.article.title = :title and e.published = :published";
+			"from evaluation e where e.article.title = :title and e.published = :published";
 	private static final String ALL_EVALUATIONS = 
-			"from Evaluation e ";
+			"from evaluation e ";
 	private static final String EVALUATION_FROM_USER_ARTICLE = 
-			"from Evaluation e where e.user.id = :id and e.article.title = :title";
+			"from evaluation e where e.user.id = :id and e.article.title = :title";
 	
 	public void persist(EvaluationEntity obj) 
 	{
