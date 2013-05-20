@@ -18,7 +18,8 @@
 		<property name="hibernate.connection.pool_size">1</property>
 
 		<!-- SQL dialect -->
-		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.dialect">br.ufrn.dimap.pubnote.hibernate.PubnotesPostgreSQLDialect</property>
+		
 
 		<!-- Enable Hibernate's automatic session context management -->
 		<property name="hibernate.current_session_context_class">thread</property>
@@ -36,11 +37,11 @@
 		<!-- MAPPINGS HERE -->
 
 		<mapping  class="br.ufrn.dimap.pubnote.domain.UserEntity"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.ProfileEntity"/>
+		<mapping  class="br.ufrn.dimap.pubnote.domain.TagEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.TagUserEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ArticleEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.EvaluationEntity"/>
-		<mapping  class="br.ufrn.dimap.pubnote.domain.ProfileEntity"/>
-		<mapping  class="br.ufrn.dimap.pubnote.domain.TagEntity"/>
 		
 	</session-factory>
 </hibernate-configuration>
