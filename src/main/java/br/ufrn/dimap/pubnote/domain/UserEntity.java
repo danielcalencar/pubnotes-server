@@ -141,7 +141,7 @@ public class UserEntity implements Serializable{
 		user.setUsername(this.getUsername());
 		user.setOnsigned(this.getOnsigned());
 		
-		List<User> friends = new ArrayList<User>();
+		/*List<User> friends = new ArrayList<User>();
 		if(this.getFriends() != null)
 		{
 			for(UserEntity fe : this.getFriends())
@@ -150,7 +150,7 @@ public class UserEntity implements Serializable{
 			}
 		}
 		user.setFriends(friends);
-		
+		*/
 		List<Tag> tags = new ArrayList<Tag>();
 		if(this.getTags() != null)
 		{
