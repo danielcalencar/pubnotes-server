@@ -1,5 +1,6 @@
 package br.ufrn.dimap.pubnote.ws;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -203,6 +204,33 @@ public class UserService {
 		return users;
 	}
 	
+	/**
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"username":"juliana"}' http://localhost:8080/pubnote.server/rest/user/getFriends
+	 * @param user
+	 * @return
+	 */	
+	@POST
+	@Path("/getTags")
+	public Tag[] retrieveTags(User user)
+	{
+		userDAO = userFactory.createDAO();
+		Transaction tx = userDAO.beginTransaction();
+
+		UserEntity entity = userDAO.load(user.getId());
+		List<TagEntity> tags = entity.getTags();
+		
+		Tag[] tagArray = new Tag[tags.size()];
+		if(tags.size() != 0){	
+			for(int i = 0; i < tagArray.length; i++)
+			{
+				tagArray[i] = tags.get(i).convertToTag();
+			}
+		}
+		
+		userDAO.commit(tx);
+		return tagArray;
+	}
+
 	
 	/**
 	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"username":"juliana"}' http://localhost:8080/pubnote.server/rest/user/getFriends
@@ -302,6 +330,31 @@ public class UserService {
 		}
 		
 		entity.getMarkedTags().add(tuentity);	
+		
+		userDAO.update(entity);
+			
+		tx.commit();
+		return Response.status(201).build();
+	}
+	
+	
+	/**
+	 * curl -i   -H "Content-Type: application/json" -X POST -d '{"id":"6"}' http://localhost:8080/pubnote.server/rest/user/addTag  
+	 * @param user
+	 * @return
+	 */	
+	@POST
+	@Path("/removeFriend")
+	public Response removeFriend(User user){
+		//criando os DAOs que acessam o BD
+		userDAO = userFactory.createDAO();
+		
+		/** first we must verify if the tag already exists **/
+		Transaction tx = userDAO.beginTransaction();
+		//usuario que foi marcado
+		UserEntity entity = userDAO.load(user.getId());
+		
+		
 		
 		userDAO.update(entity);
 			
