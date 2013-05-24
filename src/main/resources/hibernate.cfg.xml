@@ -10,9 +10,9 @@
 		<!-- Database connection settings -->
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/pubnotes</property>
-		<property name="hibernate.connection.username">netmobile</property>
+		<property name="hibernate.connection.username">postgres</property>
 
-		<property name="hibernate.connection.password">netmobile</property>
+		<property name="hibernate.connection.password">postgres</property>
 
 		<!-- JDBC connection pool (use the built-in) -->
 		<property name="hibernate.connection.pool_size">1</property>
@@ -42,6 +42,6 @@
 		<mapping  class="br.ufrn.dimap.pubnote.domain.TagUserEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.ArticleEntity"/>
 		<mapping  class="br.ufrn.dimap.pubnote.domain.EvaluationEntity"/>
-		
+		<mapping  class="br.ufrn.dimap.pubnote.domain.RecommendationEntity"/>
 	</session-factory>
 </hibernate-configuration>
